@@ -26,12 +26,11 @@ Partial Class FrmChat
         Me.BtnEnviar = New System.Windows.Forms.Button()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.LblNombre = New System.Windows.Forms.Label()
-        Me.Label3 = New System.Windows.Forms.Label()
         Me.BtnDesconectar = New System.Windows.Forms.Button()
         Me.LtbUsuarios = New System.Windows.Forms.ListBox()
         Me.Label4 = New System.Windows.Forms.Label()
-        Me.LtbChat = New System.Windows.Forms.ListBox()
-        Me.Button1 = New System.Windows.Forms.Button()
+        Me.BtnCambiar = New System.Windows.Forms.Button()
+        Me.LVChat = New System.Windows.Forms.ListView()
         Me.SuspendLayout()
         '
         'TxtEntrada
@@ -55,9 +54,9 @@ Partial Class FrmChat
         Me.Label1.AutoSize = True
         Me.Label1.Location = New System.Drawing.Point(13, 13)
         Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(79, 13)
+        Me.Label1.Size = New System.Drawing.Size(113, 13)
         Me.Label1.TabIndex = 3
-        Me.Label1.Text = "Nombre actual:"
+        Me.Label1.Text = "Nombre y color actual:"
         '
         'LblNombre
         '
@@ -67,15 +66,6 @@ Partial Class FrmChat
         Me.LblNombre.Size = New System.Drawing.Size(13, 13)
         Me.LblNombre.TabIndex = 4
         Me.LblNombre.Text = "?"
-        '
-        'Label3
-        '
-        Me.Label3.AutoSize = True
-        Me.Label3.Location = New System.Drawing.Point(14, 55)
-        Me.Label3.Name = "Label3"
-        Me.Label3.Size = New System.Drawing.Size(31, 13)
-        Me.Label3.TabIndex = 5
-        Me.Label3.Text = "Color"
         '
         'BtnDesconectar
         '
@@ -103,23 +93,24 @@ Partial Class FrmChat
         Me.Label4.TabIndex = 8
         Me.Label4.Text = "Usuarios conectados:"
         '
-        'LtbChat
+        'BtnCambiar
         '
-        Me.LtbChat.FormattingEnabled = True
-        Me.LtbChat.Location = New System.Drawing.Point(204, 15)
-        Me.LtbChat.Name = "LtbChat"
-        Me.LtbChat.SelectionMode = System.Windows.Forms.SelectionMode.None
-        Me.LtbChat.Size = New System.Drawing.Size(444, 394)
-        Me.LtbChat.TabIndex = 9
+        Me.BtnCambiar.Location = New System.Drawing.Point(16, 57)
+        Me.BtnCambiar.Name = "BtnCambiar"
+        Me.BtnCambiar.Size = New System.Drawing.Size(144, 23)
+        Me.BtnCambiar.TabIndex = 10
+        Me.BtnCambiar.Text = "Cambiar nombre y color"
+        Me.BtnCambiar.UseVisualStyleBackColor = True
         '
-        'Button1
+        'LVChat
         '
-        Me.Button1.Location = New System.Drawing.Point(105, 8)
-        Me.Button1.Name = "Button1"
-        Me.Button1.Size = New System.Drawing.Size(75, 23)
-        Me.Button1.TabIndex = 10
-        Me.Button1.Text = "Cambiar"
-        Me.Button1.UseVisualStyleBackColor = True
+        Me.LVChat.HideSelection = False
+        Me.LVChat.Location = New System.Drawing.Point(204, 8)
+        Me.LVChat.Name = "LVChat"
+        Me.LVChat.Size = New System.Drawing.Size(444, 401)
+        Me.LVChat.TabIndex = 11
+        Me.LVChat.UseCompatibleStateImageBehavior = False
+        Me.LVChat.View = System.Windows.Forms.View.List
         '
         'FrmChat
         '
@@ -127,12 +118,11 @@ Partial Class FrmChat
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(660, 450)
-        Me.Controls.Add(Me.Button1)
-        Me.Controls.Add(Me.LtbChat)
+        Me.Controls.Add(Me.LVChat)
+        Me.Controls.Add(Me.BtnCambiar)
         Me.Controls.Add(Me.Label4)
         Me.Controls.Add(Me.LtbUsuarios)
         Me.Controls.Add(Me.BtnDesconectar)
-        Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.LblNombre)
         Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.BtnEnviar)
@@ -147,10 +137,9 @@ Partial Class FrmChat
     Friend WithEvents BtnEnviar As Button
     Friend WithEvents Label1 As Label
     Friend WithEvents LblNombre As Label
-    Friend WithEvents Label3 As Label
     Friend WithEvents BtnDesconectar As Button
     Friend WithEvents LtbUsuarios As ListBox
     Friend WithEvents Label4 As Label
-    Friend WithEvents LtbChat As ListBox
-    Friend WithEvents Button1 As Button
+    Friend WithEvents BtnCambiar As Button
+    Friend WithEvents LVChat As ListView
 End Class

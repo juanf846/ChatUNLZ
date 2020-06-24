@@ -39,7 +39,7 @@ Public Class FrmChat
     Public Sub AgregarUsuario(u As Usuario)
         If u.Conectado Then
             LtbUsuarios.Items.Add(u.Nombre)
-            LtbUsuarios.TopIndex = LtbChat.Items.Count - 1
+            LtbUsuarios.TopIndex = LtbUsuarios.Items.Count - 1
         End If
     End Sub
 
@@ -52,16 +52,18 @@ Public Class FrmChat
 
     Public Sub AgregarMensaje(usuarioNombre As String, mensaje As String, hora As Date, c As Color)
         Dim salida = usuarioNombre & " (" & FormatDateTime(hora, DateFormat.ShortTime) & "): " & mensaje
-
-        LtbChat.Items.Add(salida)
-        LtbChat.TopIndex = LtbChat.Items.Count - 1
+        Dim item As New ListViewItem
+        item.Text = salida
+        item.ForeColor = c
+        LVChat.Items.Add(item)
+        'LVChat.TopItem = LVChat.Items(LVChat.Items.Count - 1)
     End Sub
 
     Public Sub LimpiarMensajes()
-        LtbChat.Items.Clear()
+        LVChat.Items.Clear()
     End Sub
 
-    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+    Private Sub BtnCambiar_Click(sender As Object, e As EventArgs) Handles BtnCambiar.Click
         UsuarioInfo.Nombre = "test"
         UsuarioInfo.Color = Color.Red
         Cliente.EnviarCHGNAME("test", Color.Red)
