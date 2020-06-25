@@ -26,11 +26,13 @@ Partial Class FrmMain
         Me.Label1 = New System.Windows.Forms.Label()
         Me.BtnCrear = New System.Windows.Forms.Button()
         Me.BtnUnirse = New System.Windows.Forms.Button()
+        Me.Label2 = New System.Windows.Forms.Label()
+        Me.BtnColor = New System.Windows.Forms.Button()
         Me.SuspendLayout()
         '
         'TxtNombre
         '
-        Me.TxtNombre.Location = New System.Drawing.Point(12, 38)
+        Me.TxtNombre.Location = New System.Drawing.Point(12, 25)
         Me.TxtNombre.Name = "TxtNombre"
         Me.TxtNombre.Size = New System.Drawing.Size(194, 20)
         Me.TxtNombre.TabIndex = 0
@@ -38,7 +40,7 @@ Partial Class FrmMain
         'Label1
         '
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(63, 14)
+        Me.Label1.Location = New System.Drawing.Point(61, 9)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(96, 13)
         Me.Label1.TabIndex = 1
@@ -46,7 +48,7 @@ Partial Class FrmMain
         '
         'BtnCrear
         '
-        Me.BtnCrear.Location = New System.Drawing.Point(39, 74)
+        Me.BtnCrear.Location = New System.Drawing.Point(39, 95)
         Me.BtnCrear.Name = "BtnCrear"
         Me.BtnCrear.Size = New System.Drawing.Size(140, 23)
         Me.BtnCrear.TabIndex = 2
@@ -55,18 +57,38 @@ Partial Class FrmMain
         '
         'BtnUnirse
         '
-        Me.BtnUnirse.Location = New System.Drawing.Point(39, 103)
+        Me.BtnUnirse.Location = New System.Drawing.Point(39, 124)
         Me.BtnUnirse.Name = "BtnUnirse"
         Me.BtnUnirse.Size = New System.Drawing.Size(140, 23)
         Me.BtnUnirse.TabIndex = 3
         Me.BtnUnirse.Text = "Unirse a un servidor"
         Me.BtnUnirse.UseVisualStyleBackColor = True
         '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Location = New System.Drawing.Point(94, 50)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(31, 13)
+        Me.Label2.TabIndex = 4
+        Me.Label2.Text = "Color"
+        '
+        'BtnColor
+        '
+        Me.BtnColor.BackColor = System.Drawing.Color.Red
+        Me.BtnColor.Location = New System.Drawing.Point(97, 66)
+        Me.BtnColor.Name = "BtnColor"
+        Me.BtnColor.Size = New System.Drawing.Size(25, 23)
+        Me.BtnColor.TabIndex = 5
+        Me.BtnColor.UseVisualStyleBackColor = False
+        '
         'FrmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(218, 138)
+        Me.ClientSize = New System.Drawing.Size(218, 191)
+        Me.Controls.Add(Me.BtnColor)
+        Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.BtnUnirse)
         Me.Controls.Add(Me.BtnCrear)
         Me.Controls.Add(Me.Label1)
@@ -82,4 +104,6 @@ Partial Class FrmMain
     Friend WithEvents Label1 As Label
     Friend WithEvents BtnCrear As Button
     Friend WithEvents BtnUnirse As Button
+    Friend WithEvents Label2 As Label
+    Friend WithEvents BtnColor As Button
 End Class

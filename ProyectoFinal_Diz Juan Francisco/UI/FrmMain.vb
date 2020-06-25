@@ -16,7 +16,7 @@
         End If
 
         Dim Input As String
-        Input = InputBox("Ingrese el puerto para el servidor (por defecto = 10846)")
+        Input = InputBox("Ingrese el puerto para el servidor", "Crear un servidor", "10846")
         If Input = "" Then
             Return
         End If
@@ -33,6 +33,7 @@
 
         Dim usuario As New Usuario
         usuario.Nombre = nombre
+        usuario.Color = BtnColor.BackColor
 
         Dim chat As New FrmChat(False, New Net.IPEndPoint(Net.IPAddress.Any, Puerto), usuario)
         chat.Show()
@@ -54,6 +55,7 @@
 
         Dim usuario As New Usuario
         usuario.Nombre = nombre
+        usuario.Color = BtnColor.BackColor
 
         Dim IPServer As New Net.IPEndPoint(Net.IPAddress.Parse(Ip), 10846)
         Console.WriteLine("Conectando a " & IPServer.ToString & " | " & Ip)
@@ -75,4 +77,10 @@
         Return True
     End Function
 
+    Private Sub BtnColor_Click(sender As Object, e As EventArgs) Handles BtnColor.Click
+        Dim colorPicker As New ColorDialog
+        colorPicker.Color = BtnColor.BackColor
+        colorPicker.ShowDialog()
+        BtnColor.BackColor = colorPicker.Color
+    End Sub
 End Class

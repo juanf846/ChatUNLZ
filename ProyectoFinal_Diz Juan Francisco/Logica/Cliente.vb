@@ -11,6 +11,7 @@ Namespace Logica
 
         Private IPServidor As IPEndPoint
         Private Conectado As Boolean = False
+        Private Terminando As Boolean = False
 
         Private FrmChatActivo As FrmChat
 
@@ -122,6 +123,9 @@ Namespace Logica
         End Sub
 
         Public Sub OnNewMessage(mensajeData As MensajeData, idMensajeResponse As Long, ip As IPEndPoint)
+            If Terminando Then
+                Return
+            End If
             Select Case mensajeData.Tipo
                 Case MensajeData.Tipos.NEWMSG
                     OnReceiveNEWMSG(mensajeData, idMensajeResponse, ip)
@@ -195,6 +199,7 @@ Namespace Logica
         End Sub
 
         Public Sub Terminate()
+            Terminando = True
             If Conectado Then
                 Dim newMensajeDataDISCONNECT As New MensajeData(MensajeData.Tipos.DISCONNECT, {UsuarioLocal.ServerId})
                 Escuchador.EnviarMensaje(IPServidor, newMensajeDataDISCONNECT, Nothing, False)

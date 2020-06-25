@@ -12,6 +12,7 @@ Public Class FrmChat
         Me.ClientMode = clientMode
         Me.UsuarioInfo = usuarioInfo
         LblNombre.Text = usuarioInfo.Nombre
+        LblNombre.ForeColor = usuarioInfo.Color
 
         If Not clientMode Then
             Server = New Logica.Server(ipAddress.Port)
