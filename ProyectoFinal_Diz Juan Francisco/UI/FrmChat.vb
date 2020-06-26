@@ -7,7 +7,7 @@ Public Class FrmChat
     Private Server As Logica.Server
 
 
-    Public Sub New(clientMode As Boolean, ipAddress As IPEndPoint, usuarioInfo As Usuario)
+    Public Sub New(clientMode As Boolean, ipAddress As IPEndPoint, usuarioInfo As Usuario, contraseña As String)
         InitializeComponent()
         Me.ClientMode = clientMode
         Me.UsuarioInfo = usuarioInfo
@@ -15,7 +15,7 @@ Public Class FrmChat
         LblNombre.ForeColor = usuarioInfo.Color
 
         If Not clientMode Then
-            Server = New Logica.Server(ipAddress.Port)
+            Server = New Logica.Server(ipAddress.Port, contraseña)
             ipAddress = New IPEndPoint(Net.IPAddress.Loopback, ipAddress.Port)
         End If
 

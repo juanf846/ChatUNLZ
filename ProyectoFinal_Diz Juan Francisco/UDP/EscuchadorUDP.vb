@@ -32,19 +32,19 @@ Namespace UDP
         Private ThreadMain As Thread
         Private Client As UdpClient
         Public OnNewMessage As Action(Of UDP.MensajeData, Long, IPEndPoint)
+        Private Cifrador As CifradorAES
+
         Private Ejecutandose As Boolean = True
-        Private Cifrado As Boolean = False
-        Private ClaveCifrado As String
+        Private UsaCifrado As Boolean = False
 
         Private nextIdMensaje As Integer = 0
         Private MensajesSinRespuesta As New List(Of MensajeUDP)
         Private MensajesParaEnviar As New List(Of MensajeParaEnviar)
 
 
-        Public Sub Iniciar(puerto As Integer, claveCifrado As Object)
+        Public Sub Iniciar(puerto As Integer, claveCifrado As String)
             EscuchadorID = Debug.nextIdEscuchador
             Debug.nextIdEscuchador += 1
-            Me.ClaveCifrado = claveCifrado
             Me.Puerto = puerto
             If puerto = 0 Then
                 Client = New UdpClient(0)
@@ -53,6 +53,8 @@ Namespace UDP
             End If
             Client.Client.ReceiveTimeout = 100
             Debug.log(EscuchadorID, "Iniciado en puerto " & puerto)
+
+            SetClaveCifrado(claveCifrado)
 
             ThreadMain = New Thread(AddressOf Escuchador)
             ThreadMain.Start()
@@ -67,19 +69,34 @@ Namespace UDP
                     Dim Input() As Byte = Client.Receive(receiveEndPoint)
                     Debug.log(EscuchadorID, "Recibido")
                     Dim stream As New IO.MemoryStream
-                    stream.Write(input, 0, input.Length)
+                    stream.Write(Input, 0, Input.Length)
                     stream.Position = 0
 
                     'decodifica
                     Dim mensajeUDP As MensajeUDP = Formatter.Deserialize(stream)
-                    If mensajeUDP.Cifrado Then
-                        'Descifrar
-                        'TODO descifrar
-                    End If
-                    Debug.log(EscuchadorID, "Nuevo mensaje, tipo = " & mensajeUDP.Contenido.Tipo.ToString())
 
-                    If Cifrado AndAlso Not mensajeUDP.Cifrado AndAlso mensajeUDP.Contenido.Tipo <> MensajeData.Tipos.INFO Then
-                        Throw New SecurityException("Se recibió un mensaje no cifrado en un servidor que usa cifrado")
+                    If mensajeUDP.Cifrado And Not UsaCifrado Then
+                        Throw New SecurityException("Se recibió un mensaje cifrado en un escuchador que no usa cifrado")
+                    End If
+
+                    If mensajeUDP.Cifrado Then
+                        Try
+                            Dim streamCifrado = mensajeUDP.Contenido
+                            Dim streamNoCifrado = New IO.MemoryStream(Cifrador.Descifrar(streamCifrado))
+                            streamNoCifrado.Position = 0
+
+                            mensajeUDP.Contenido = Formatter.Deserialize(streamNoCifrado)
+                        Catch e As Exception
+                            Dim mensajeDataLocal = New MensajeData(MensajeData.Tipos.ESTADO_ERROR, {MensajeData.TiposError.BADPASS})
+                            EnviarMensaje(receiveEndPoint, mensajeDataLocal, Nothing, False, mensajeUDP.IdMensaje, True)
+                            Throw New SecurityException("No se pudo deserializar el mensaje porque hubo un problema en el cifrado")
+                        End Try
+                    End If
+
+                    If UsaCifrado AndAlso Not mensajeUDP.Cifrado AndAlso mensajeUDP.Contenido.Tipo <> MensajeData.Tipos.INFO AndAlso
+                        mensajeUDP.Contenido.Tipo <> MensajeData.Tipos.ESTADO_ERROR Then
+
+                        Throw New SecurityException("Se recibió un mensaje no cifrado en un escuchador que usa cifrado")
                     End If
 
 
@@ -152,10 +169,28 @@ Namespace UDP
         Public Sub EnviarMensaje(ByRef remoteEndPoint As IPEndPoint, ByRef mensaje As MensajeData,
                                   ByRef onResponse As Action(Of MensajeData, Long, IPEndPoint),
                                   requireResponse As Boolean, idMensaje As Long)
+            EnviarMensaje(remoteEndPoint, mensaje, onResponse, requireResponse, idMensaje, False)
+        End Sub
+
+        Public Sub EnviarMensaje(ByRef remoteEndPoint As IPEndPoint, ByRef mensaje As MensajeData,
+                                  ByRef onResponse As Action(Of MensajeData, Long, IPEndPoint),
+                                  requireResponse As Boolean, idMensaje As Long, forzarNoCifrado As Boolean)
             Dim mensajeUDP As New MensajeUDP
             mensajeUDP.ServerVersion = VERSION
             mensajeUDP.IdMensaje = idMensaje
             mensajeUDP.Contenido = mensaje
+
+            Debug.log(EscuchadorID, "Enviando mensaje a " & remoteEndPoint.ToString & " | ID de mensaje: " & mensajeUDP.IdMensaje &
+                              " | Tipo de mensaje: " & mensajeUDP.Contenido.Tipo.ToString())
+
+            If Not mensaje.Tipo = MensajeData.Tipos.INFO And UsaCifrado And Not forzarNoCifrado Then
+                Dim streamNoCifrado As New IO.MemoryStream
+                Formatter.Serialize(streamNoCifrado, mensajeUDP.Contenido)
+                streamNoCifrado.Position = 0
+
+                mensajeUDP.Contenido = Cifrador.Cifrar(streamNoCifrado.ToArray())
+                mensajeUDP.Cifrado = True
+            End If
 
             'Agregar al array
             If requireResponse Then
@@ -170,22 +205,23 @@ Namespace UDP
             stream.Position = 0
 
             Dim bytes() As Byte = stream.ToArray()
-            Debug.log(EscuchadorID, "Enviando mensaje a " & remoteEndPoint.ToString & " | ID de mensaje: " & mensajeUDP.IdMensaje &
-                              " | Tipo de mensaje: " & mensajeUDP.Contenido.Tipo.ToString())
 
-            If Cifrado Then
-                'Cifrar()
-                'Todo Cifrado
-            End If
 
             MensajesParaEnviar.Add(New MensajeParaEnviar(bytes, remoteEndPoint))
         End Sub
 
         Private Sub OnNewINFO(mensajeData As UDP.MensajeData, idMensajeRespuesta As Long, remoteEndPoint As IPEndPoint)
             Dim newMensajeData As New UDP.MensajeData(UDP.MensajeData.Tipos.ESTADO_OK)
-            newMensajeData.Parametros = {VERSION, Cifrado}
+            newMensajeData.Parametros = {VERSION, UsaCifrado}
 
-            EnviarMensaje(remoteEndPoint, newMensajeData, Nothing, False, idMensajeRespuesta)
+            EnviarMensaje(remoteEndPoint, newMensajeData, Nothing, False, idMensajeRespuesta, True)
+        End Sub
+
+        Private Sub OnBADPASS(idMensajeRespuesta As Long, remoteEndPoint As IPEndPoint)
+            Dim newMensajeData As New UDP.MensajeData(UDP.MensajeData.Tipos.ESTADO_ERROR)
+            newMensajeData.Parametros = {UDP.MensajeData.TiposError.BADPASS}
+
+            EnviarMensaje(remoteEndPoint, newMensajeData, Nothing, False, idMensajeRespuesta, True)
         End Sub
 
         Public Function GetReceiverPort()
@@ -193,8 +229,12 @@ Namespace UDP
         End Function
 
         Public Sub SetClaveCifrado(claveCifrado As String)
-            Me.ClaveCifrado = claveCifrado
-
+            If Not IsNothing(claveCifrado) Then
+                UsaCifrado = True
+                Cifrador = New CifradorAES(claveCifrado)
+            Else
+                UsaCifrado = False
+            End If
         End Sub
 
         Public Sub Terminate()

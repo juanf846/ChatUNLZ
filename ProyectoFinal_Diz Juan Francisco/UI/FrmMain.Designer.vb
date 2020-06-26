@@ -28,6 +28,7 @@ Partial Class FrmMain
         Me.BtnUnirse = New System.Windows.Forms.Button()
         Me.Label2 = New System.Windows.Forms.Label()
         Me.BtnColor = New System.Windows.Forms.Button()
+        Me.Label3 = New System.Windows.Forms.Label()
         Me.SuspendLayout()
         '
         'TxtNombre
@@ -82,11 +83,21 @@ Partial Class FrmMain
         Me.BtnColor.TabIndex = 5
         Me.BtnColor.UseVisualStyleBackColor = False
         '
+        'Label3
+        '
+        Me.Label3.AutoSize = True
+        Me.Label3.Location = New System.Drawing.Point(9, 150)
+        Me.Label3.Name = "Label3"
+        Me.Label3.Size = New System.Drawing.Size(39, 13)
+        Me.Label3.TabIndex = 6
+        Me.Label3.Text = "Label3"
+        '
         'FrmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(218, 191)
+        Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.BtnColor)
         Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.BtnUnirse)
@@ -106,4 +117,5 @@ Partial Class FrmMain
     Friend WithEvents BtnUnirse As Button
     Friend WithEvents Label2 As Label
     Friend WithEvents BtnColor As Button
+    Friend WithEvents Label3 As Label
 End Class

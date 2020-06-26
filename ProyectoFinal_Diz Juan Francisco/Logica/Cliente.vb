@@ -61,6 +61,8 @@ Namespace Logica
                             mensajeRecibido.Parametros(0) = MensajeData.TiposError.BADPASS Then
                         MsgBox("La contraseña ingresada no es valida")
                         EnviarCONNECT(True, ip)
+                    Else
+                        MsgBox("Error critico (C65)")
                     End If
                 End Sub, True)
         End Sub

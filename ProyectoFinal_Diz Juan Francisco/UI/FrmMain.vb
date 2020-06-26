@@ -7,6 +7,11 @@
         ' Agregue cualquier inicialización después de la llamada a InitializeComponent().
 
         Control.CheckForIllegalCrossThreadCalls = False
+
+        Dim test As String = "Hola Mundo!"
+        Dim a As New CifradorAES("123123123")
+        Dim b = a.Cifrar(System.Text.Encoding.UTF8.GetBytes(test))
+        Label3.Text = System.Text.Encoding.UTF8.GetString(a.Descifrar(b))
     End Sub
 
     Private Sub BtnCrear_Click(sender As Object, e As EventArgs) Handles BtnCrear.Click
@@ -15,19 +20,10 @@
             Return
         End If
 
-        Dim Input As String
-        Input = InputBox("Ingrese el puerto para el servidor", "Crear un servidor", "10846")
-        If Input = "" Then
-            Return
-        End If
+        Dim puerto As Integer
+        Dim contraseña As String
 
-        Dim Puerto As Integer
-        If Not Integer.TryParse(Input, Puerto) Then
-            MsgBox("El puerto no es valido")
-            Return
-        End If
-        If Puerto < 1024 Or Puerto > 65536 Then
-            MsgBox("El puerto no es valido")
+        If Not FrmCrearServer.Mostrar(puerto, contraseña) Then
             Return
         End If
 
@@ -35,7 +31,7 @@
         usuario.Nombre = nombre
         usuario.Color = BtnColor.BackColor
 
-        Dim chat As New FrmChat(False, New Net.IPEndPoint(Net.IPAddress.Any, Puerto), usuario)
+        Dim chat As New FrmChat(False, New Net.IPEndPoint(Net.IPAddress.Any, puerto), usuario, contraseña)
         chat.Show()
 
     End Sub
@@ -60,7 +56,7 @@
         Dim IPServer As New Net.IPEndPoint(Net.IPAddress.Parse(Ip), 10846)
         Console.WriteLine("Conectando a " & IPServer.ToString & " | " & Ip)
 
-        Dim chat As New FrmChat(True, IPServer, usuario)
+        Dim chat As New FrmChat(True, IPServer, usuario, Nothing)
         chat.Show()
     End Sub
 
@@ -83,4 +79,5 @@
         colorPicker.ShowDialog()
         BtnColor.BackColor = colorPicker.Color
     End Sub
+
 End Class

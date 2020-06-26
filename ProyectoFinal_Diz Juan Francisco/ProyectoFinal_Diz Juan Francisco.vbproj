@@ -75,12 +75,19 @@
   <ItemGroup>
     <Compile Include="Logica\Cliente.vb" />
     <Compile Include="Logica\Mensaje.vb" />
+    <Compile Include="UDP\CifradorAES.vb" />
     <Compile Include="UDP\EscuchadorUDP.vb" />
     <Compile Include="UDP\SenderUDP.vb" />
     <Compile Include="UI\FrmChat.Designer.vb">
       <DependentUpon>FrmChat.vb</DependentUpon>
     </Compile>
     <Compile Include="UI\FrmChat.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\FrmCrearServer.Designer.vb">
+      <DependentUpon>FrmCrearServer.vb</DependentUpon>
+    </Compile>
+    <Compile Include="UI\FrmCrearServer.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI\FrmMain.vb">
@@ -113,6 +120,9 @@
   <ItemGroup>
     <EmbeddedResource Include="UI\FrmChat.resx">
       <DependentUpon>FrmChat.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\FrmCrearServer.resx">
+      <DependentUpon>FrmCrearServer.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\FrmMain.resx">
       <DependentUpon>FrmMain.vb</DependentUpon>

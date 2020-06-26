@@ -11,10 +11,10 @@ Namespace Logica
         Dim Mensajes As New List(Of Mensaje)
         Dim Usuarios As New List(Of Usuario)
 
-        Public Sub New(puerto As Integer)
+        Public Sub New(puerto As Integer, contraseña As String)
             Escuchador = New UDP.EscuchadorUDP()
-            Escuchador.Iniciar(puerto, Nothing)
             Escuchador.OnNewMessage = AddressOf OnNewMessage
+            Escuchador.Iniciar(puerto, contraseña)
         End Sub
 
         Public Sub AgregarMensaje(newMensaje As Mensaje)
