@@ -19,20 +19,16 @@ Public Class CifradorAES
     Public Function Cifrar(input As Byte()) As Byte()
         Dim outStream As New MemoryStream
         Dim cryptoStream As New CryptoStream(outStream, Algoritmo.CreateEncryptor(), CryptoStreamMode.Write)
-        Console.WriteLine(input.Count)
         cryptoStream.Write(input, 0, input.Count)
         cryptoStream.FlushFinalBlock()
-        Console.WriteLine(outStream.ToArray().Count)
         Return outStream.ToArray()
     End Function
     Public Function Descifrar(input As Byte()) As Byte()
         Try
             Dim inStream As New MemoryStream(input)
-            Console.WriteLine(input.Count)
             Dim cryptoStream As New CryptoStream(inStream, Algoritmo.CreateDecryptor(), CryptoStreamMode.Read)
             Dim output(inStream.Length - 1) As Byte
             cryptoStream.Read(output, 0, output.Count)
-            Console.WriteLine(output.Count)
             Return output
         Catch e As Exception
             Throw e

@@ -7,11 +7,6 @@
         ' Agregue cualquier inicialización después de la llamada a InitializeComponent().
 
         Control.CheckForIllegalCrossThreadCalls = False
-
-        Dim test As String = "Hola Mundo!"
-        Dim a As New CifradorAES("123123123")
-        Dim b = a.Cifrar(System.Text.Encoding.UTF8.GetBytes(test))
-        Label3.Text = System.Text.Encoding.UTF8.GetString(a.Descifrar(b))
     End Sub
 
     Private Sub BtnCrear_Click(sender As Object, e As EventArgs) Handles BtnCrear.Click
