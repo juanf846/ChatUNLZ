@@ -8,13 +8,26 @@ Namespace Logica
         Private nextServerId = 1
 
         Dim Escuchador As UDP.EscuchadorUDP
+        Public Funcionando = False
         Dim Mensajes As New List(Of Mensaje)
         Dim Usuarios As New List(Of Usuario)
 
         Public Sub New(puerto As Integer, contraseña As String)
-            Escuchador = New UDP.EscuchadorUDP()
-            Escuchador.OnNewMessage = AddressOf OnNewMessage
-            Escuchador.Iniciar(puerto, contraseña)
+            Try
+                Escuchador = New UDP.EscuchadorUDP()
+                Escuchador.OnNewMessage = AddressOf OnNewMessage
+                Escuchador.Iniciar(puerto, contraseña)
+                Funcionando = True
+            Catch e As Net.Sockets.SocketException
+                Dim causa = ""
+                If e.ErrorCode = 10048 Then
+                    causa = "que el puerto ya está en uso"
+                Else
+                    causa = " un error desconocido"
+                End If
+                MsgBox("No se pudo crear el servidor por" & causa & " (error: " & e.ErrorCode & ")")
+                Terminate()
+            End Try
         End Sub
 
         Public Sub AgregarMensaje(newMensaje As Mensaje)
@@ -165,6 +178,7 @@ Namespace Logica
         End Sub
 
         Public Sub Terminate()
+            Funcionando = False
             EnviarATodos(New MensajeData(MensajeData.Tipos.CLOSED, {}))
             Threading.Thread.Sleep(1000)
             Escuchador.Terminate()

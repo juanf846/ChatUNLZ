@@ -31,8 +31,8 @@
         End If
 
         If ChkContraseña.Checked Then
-            If TxtContraseña.Text.Trim().Length = 0 Then
-                MsgBox("Ingrese una contraseña")
+            If TxtContraseña.Text.Trim().Length < 8 Then
+                MsgBox("Ingrese una contraseña de 8 caracteres o mas")
                 Return
             End If
         End If

@@ -77,11 +77,16 @@
     <Compile Include="Logica\Mensaje.vb" />
     <Compile Include="UDP\CifradorAES.vb" />
     <Compile Include="UDP\EscuchadorUDP.vb" />
-    <Compile Include="UDP\SenderUDP.vb" />
     <Compile Include="UI\FrmChat.Designer.vb">
       <DependentUpon>FrmChat.vb</DependentUpon>
     </Compile>
     <Compile Include="UI\FrmChat.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\FrmConectarServer.Designer.vb">
+      <DependentUpon>FrmConectarServer.vb</DependentUpon>
+    </Compile>
+    <Compile Include="UI\FrmConectarServer.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI\FrmCrearServer.Designer.vb">
@@ -97,7 +102,7 @@
       <DependentUpon>FrmMain.vb</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UDP\MensajeData.vb" />
+    <Compile Include="Logica\MensajeData.vb" />
     <Compile Include="UDP\MensajeUDP.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
@@ -120,6 +125,9 @@
   <ItemGroup>
     <EmbeddedResource Include="UI\FrmChat.resx">
       <DependentUpon>FrmChat.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\FrmConectarServer.resx">
+      <DependentUpon>FrmConectarServer.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\FrmCrearServer.resx">
       <DependentUpon>FrmCrearServer.vb</DependentUpon>

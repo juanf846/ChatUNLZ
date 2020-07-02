@@ -16,7 +16,7 @@ Namespace Logica
         Private FrmChatActivo As FrmChat
 
 
-        Public Sub New(ip As IPEndPoint, usuarioLocal As Usuario, frmChat As FrmChat)
+        Public Sub New(ip As IPEndPoint, usuarioLocal As Usuario, frmChat As FrmChat, contraseña As String, conexionLocal As Boolean)
             Me.UsuarioLocal = usuarioLocal
             Me.FrmChatActivo = frmChat
             Me.IPServidor = ip
@@ -25,23 +25,36 @@ Namespace Logica
             Escuchador.Iniciar(0, Nothing)
             Escuchador.OnNewMessage = AddressOf OnNewMessage
 
-            Dim newMensajeDataINFO As New MensajeData(MensajeData.Tipos.INFO)
-            Dim m As Action(Of UDP.MensajeData, Long, IPEndPoint) =
+            If Not conexionLocal Then
+                Dim newMensajeDataINFO As New MensajeData(MensajeData.Tipos.INFO)
+                Dim m As Action(Of UDP.MensajeData, Long, IPEndPoint) =
                 Sub(ByVal mensajeRecibido As UDP.MensajeData, idRespuesta As Long, IPRespuesta As IPEndPoint)
                     EnviarCONNECT(mensajeRecibido.Parametros(1), ip)
                 End Sub
 
-            Escuchador.EnviarMensaje(ip, newMensajeDataINFO, m, True)
+                Escuchador.EnviarMensaje(ip, newMensajeDataINFO, m, True)
+            Else
+                If Not IsNothing(contraseña) Then
+                    Escuchador.SetClaveCifrado(contraseña)
+                End If
+                EnviarCONNECT(False, ip)
+            End If
 
         End Sub
 
         Private Sub EnviarCONNECT(requiereContraseña As Boolean, ip As IPEndPoint)
             If requiereContraseña Then
-                Dim contraseña = InputBox("Ingrese la contraseña del servidor")
-                If contraseña = "" Then
-                    FrmChatActivo.Close()
-                    Return
-                End If
+                Dim contraseña As String
+                Do
+                    contraseña = InputBox("Ingrese la contraseña del servidor")
+                    If contraseña = "" Then
+                        FrmChatActivo.Close()
+                        Return
+                    End If
+                    If contraseña.Length < 8 Then
+                        MsgBox("Ingrese una contraseña de 8 caracteres o mas")
+                    End If
+                Loop While contraseña.Length < 8
                 Escuchador.SetClaveCifrado(contraseña)
             End If
 

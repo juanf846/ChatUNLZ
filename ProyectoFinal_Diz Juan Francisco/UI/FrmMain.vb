@@ -26,8 +26,8 @@
         usuario.Nombre = nombre
         usuario.Color = BtnColor.BackColor
 
-        Dim chat As New FrmChat(False, New Net.IPEndPoint(Net.IPAddress.Any, puerto), usuario, contraseña)
-        chat.Show()
+        FrmChat.Open(False, New Net.IPEndPoint(Net.IPAddress.Any, puerto), usuario, contraseña)
+
 
     End Sub
 
@@ -37,22 +37,18 @@
             Return
         End If
 
-        Dim Ip As String
-        Ip = InputBox("Ingrese la IP del servidor")
-        If Ip = "" Then
+        Dim IPServer As Net.IPEndPoint = Nothing
+        If Not FrmConectarServer.Mostrar(IPServer) Then
             Return
         End If
-
 
         Dim usuario As New Usuario
         usuario.Nombre = nombre
         usuario.Color = BtnColor.BackColor
 
-        Dim IPServer As New Net.IPEndPoint(Net.IPAddress.Parse(Ip), 10846)
-        Console.WriteLine("Conectando a " & IPServer.ToString & " | " & Ip)
+        Console.WriteLine("Conectando a " & IPServer.ToString)
 
-        Dim chat As New FrmChat(True, IPServer, usuario, Nothing)
-        chat.Show()
+        FrmChat.Open(True, IPServer, usuario, Nothing)
     End Sub
 
     Private Sub FrmMain_Closed(sender As Object, e As EventArgs) Handles Me.Closed

@@ -30,7 +30,7 @@ Partial Class FrmChat
         Me.LtbUsuarios = New System.Windows.Forms.ListBox()
         Me.Label4 = New System.Windows.Forms.Label()
         Me.BtnCambiar = New System.Windows.Forms.Button()
-        Me.LVChat = New System.Windows.Forms.ListView()
+        Me.LtbChat = New System.Windows.Forms.ListBox()
         Me.SuspendLayout()
         '
         'TxtEntrada
@@ -102,15 +102,13 @@ Partial Class FrmChat
         Me.BtnCambiar.Text = "Cambiar nombre y color"
         Me.BtnCambiar.UseVisualStyleBackColor = True
         '
-        'LVChat
+        'LtbChat
         '
-        Me.LVChat.HideSelection = False
-        Me.LVChat.Location = New System.Drawing.Point(204, 8)
-        Me.LVChat.Name = "LVChat"
-        Me.LVChat.Size = New System.Drawing.Size(444, 401)
-        Me.LVChat.TabIndex = 11
-        Me.LVChat.UseCompatibleStateImageBehavior = False
-        Me.LVChat.View = System.Windows.Forms.View.List
+        Me.LtbChat.FormattingEnabled = True
+        Me.LtbChat.Location = New System.Drawing.Point(204, 12)
+        Me.LtbChat.Name = "LtbChat"
+        Me.LtbChat.Size = New System.Drawing.Size(444, 394)
+        Me.LtbChat.TabIndex = 11
         '
         'FrmChat
         '
@@ -118,7 +116,7 @@ Partial Class FrmChat
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(660, 450)
-        Me.Controls.Add(Me.LVChat)
+        Me.Controls.Add(Me.LtbChat)
         Me.Controls.Add(Me.BtnCambiar)
         Me.Controls.Add(Me.Label4)
         Me.Controls.Add(Me.LtbUsuarios)
@@ -141,5 +139,5 @@ Partial Class FrmChat
     Friend WithEvents LtbUsuarios As ListBox
     Friend WithEvents Label4 As Label
     Friend WithEvents BtnCambiar As Button
-    Friend WithEvents LVChat As ListView
+    Friend WithEvents LtbChat As ListBox
 End Class
