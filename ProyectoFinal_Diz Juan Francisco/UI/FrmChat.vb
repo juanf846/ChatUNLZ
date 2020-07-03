@@ -20,15 +20,13 @@ Public Class FrmChat
             End If
             ipAddress = New IPEndPoint(Net.IPAddress.Loopback, ipAddress.Port)
         End If
-
-        frmChat.Cliente = New Logica.Cliente(ipAddress, usuarioInfo, frmChat, contraseña, Not clientMode)
         frmChat.Show()
+        frmChat.Cliente = New Logica.Cliente(ipAddress, usuarioInfo, frmChat, contraseña, Not clientMode)
 
     End Sub
 
     Public Sub New()
         InitializeComponent()
-        LtbChat.DrawMode = DrawMode.OwnerDrawFixed
     End Sub
 
     Private Sub BtnEnviar_Click(sender As Object, e As EventArgs) Handles BtnEnviar.Click
@@ -43,6 +41,10 @@ Public Class FrmChat
         e.Graphics.DrawString(LtbChat.Items(e.Index).Texto, e.Font, customColor, e.Bounds.X, e.Bounds.Y)
 
         e.DrawFocusRectangle()
+    End Sub
+
+    Private Sub CheckedListBox1_ItemCheck(ByVal sender As Object, ByVal e As EventArgs) Handles LtbChat.SelectedIndexChanged
+        LtbChat.SelectedIndex = -1
     End Sub
 
     Public Sub AgregarUsuario(u As Usuario)

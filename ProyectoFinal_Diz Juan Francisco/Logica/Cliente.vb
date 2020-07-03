@@ -14,6 +14,7 @@ Namespace Logica
         Private Terminando As Boolean = False
 
         Private FrmChatActivo As FrmChat
+        Private FrmCargandoActivo As FrmCargando
 
 
         Public Sub New(ip As IPEndPoint, usuarioLocal As Usuario, frmChat As FrmChat, contraseña As String, conexionLocal As Boolean)
@@ -25,6 +26,11 @@ Namespace Logica
             Escuchador.Iniciar(0, Nothing)
             Escuchador.OnNewMessage = AddressOf OnNewMessage
 
+            FrmCargandoActivo = New FrmCargando()
+            FrmChatActivo.Enabled = False
+            FrmCargandoActivo.Show(FrmChatActivo)
+
+
             If Not conexionLocal Then
                 Dim newMensajeDataINFO As New MensajeData(MensajeData.Tipos.INFO)
                 Dim m As Action(Of UDP.MensajeData, Long, IPEndPoint) =
@@ -34,6 +40,7 @@ Namespace Logica
                     ElseIf mensajeRecibido.Tipo = MensajeData.Tipos.ESTADO_ERROR AndAlso
                             mensajeRecibido.Parametros(0) = MensajeData.TiposError.LOSTCONECTION Then
                         MsgBox("No se pudo conectar al servidor")
+                        FrmCargandoActivo.Close()
                         Terminate()
                     Else
                         MsgBox("Error critico (C39)")
@@ -76,6 +83,8 @@ Namespace Logica
                     If mensajeRecibido.Tipo = MensajeData.Tipos.ESTADO_OK Then
                         UsuarioLocal.ServerId = CInt(mensajeRecibido.Parametros(0))
                         Conectado = True
+                        FrmCargandoActivo.Close()
+                        FrmChatActivo.Enabled = True
                         EnviarALLUSR()
                         EnviarALLMSG()
                         Console.WriteLine("Cliente conectado correctamente con el id: " & UsuarioLocal.ServerId)
@@ -86,6 +95,7 @@ Namespace Logica
                     ElseIf mensajeRecibido.Tipo = MensajeData.Tipos.ESTADO_ERROR AndAlso
                             mensajeRecibido.Parametros(0) = MensajeData.TiposError.LOSTCONECTION Then
                         MsgBox("No se pudo conectar al servidor")
+                        FrmCargandoActivo.Close()
                         Terminate()
                     Else
                         MsgBox("Error critico (C82)")

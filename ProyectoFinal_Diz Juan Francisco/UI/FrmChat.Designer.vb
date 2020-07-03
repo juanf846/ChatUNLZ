@@ -104,11 +104,13 @@ Partial Class FrmChat
         '
         'LtbChat
         '
+        Me.LtbChat.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable
         Me.LtbChat.FormattingEnabled = True
         Me.LtbChat.Location = New System.Drawing.Point(204, 12)
         Me.LtbChat.Name = "LtbChat"
         Me.LtbChat.Size = New System.Drawing.Size(444, 394)
         Me.LtbChat.TabIndex = 11
+        Me.LtbChat.TabStop = False
         '
         'FrmChat
         '
@@ -126,7 +128,7 @@ Partial Class FrmChat
         Me.Controls.Add(Me.BtnEnviar)
         Me.Controls.Add(Me.TxtEntrada)
         Me.Name = "FrmChat"
-        Me.Text = "FrmChat"
+        Me.Text = "UNLZ chat"
         Me.ResumeLayout(False)
         Me.PerformLayout()
 

@@ -77,6 +77,12 @@
     <Compile Include="Logica\Mensaje.vb" />
     <Compile Include="UDP\CifradorAES.vb" />
     <Compile Include="UDP\EscuchadorUDP.vb" />
+    <Compile Include="UI\FrmCargando.Designer.vb">
+      <DependentUpon>FrmCargando.vb</DependentUpon>
+    </Compile>
+    <Compile Include="UI\FrmCargando.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\FrmChat.Designer.vb">
       <DependentUpon>FrmChat.vb</DependentUpon>
     </Compile>
@@ -123,6 +129,9 @@
     <Compile Include="Logica\Usuario.vb" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="UI\FrmCargando.resx">
+      <DependentUpon>FrmCargando.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\FrmChat.resx">
       <DependentUpon>FrmChat.vb</DependentUpon>
     </EmbeddedResource>

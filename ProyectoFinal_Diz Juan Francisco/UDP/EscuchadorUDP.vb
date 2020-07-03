@@ -175,7 +175,11 @@ Namespace UDP
                                 Debug.log(EscuchadorID, "Reenviando el mensaje " & msg.IdMensaje & " intento " & msg.ReintentosRestantes)
 
                                 Dim bytes() As Byte = stream.ToArray()
-                                Client.Send(bytes, bytes.Length, msg.EndPoint)
+                                Try
+                                    Client.Send(bytes, bytes.Length, msg.EndPoint)
+                                Catch e As Exception
+                                    Debug.log(EscuchadorID, "Error al reenviar mensaje: " & e.Message)
+                                End Try
                             End If
                         End If
                     Next
