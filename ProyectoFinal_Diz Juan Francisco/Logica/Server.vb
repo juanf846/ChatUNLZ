@@ -38,7 +38,28 @@ Namespace Logica
 
         Public Sub EnviarATodos(newMensajeData As MensajeData)
             For Each u In Usuarios
-                Escuchador.EnviarMensaje(u.EndPoint, newMensajeData, Nothing, False)
+                If Not u.Conectado Then
+                    Continue For
+                End If
+                Dim m As Action(Of UDP.MensajeData, Long, IPEndPoint) =
+                Sub(ByVal mensajeRecibido As UDP.MensajeData, idRespuesta As Long, IPRespuesta As IPEndPoint)
+                    If mensajeRecibido.Tipo = MensajeData.Tipos.ESTADO_ERROR Then
+                        Dim tipoError As MensajeData.TiposError
+                        Try
+                            tipoError = mensajeRecibido.Parametros(0)
+                        Catch e As InvalidCastException
+                            Console.WriteLine("Server: EnviarATodos - error al castear: " & e.Message)
+                            Return
+                        End Try
+                        If tipoError = MensajeData.TiposError.LOSTCONECTION Then
+                            EnviarClienteTimeout(u.ServerId)
+                        Else
+                            Console.WriteLine("Server: EnviarATodos - error desconocido: " & tipoError.ToString())
+                        End If
+                    End If
+                End Sub
+
+                Escuchador.EnviarMensaje(u.EndPoint, newMensajeData, m, True)
             Next
         End Sub
 
@@ -63,7 +84,15 @@ Namespace Logica
 
 
         Public Sub OnReceiveCONNECT(mensajeData As MensajeData, idMensajeRespuesta As Long, ip As IPEndPoint)
-            Dim newUsuario As Usuario = mensajeData.Parametros(0)
+            Dim newUsuario As Usuario
+            Try
+                newUsuario = mensajeData.Parametros(0)
+            Catch e As InvalidCastException
+                Console.WriteLine("Server: CONNECT - error al castear: " & e.Message)
+                Escuchador.EnviarMensaje(ip, New MensajeData(MensajeData.Tipos.ESTADO_ERROR, {MensajeData.TiposError.BADPROTOCOL}), Nothing, False, idMensajeRespuesta)
+                Return
+            End Try
+
             newUsuario.ServerId = nextServerId
             nextServerId += 1
             newUsuario.EndPoint = ip
@@ -90,22 +119,22 @@ Namespace Logica
         End Sub
 
         Public Sub OnReceiveDISCONNECT(mensajeData As MensajeData, idMensajeRespuesta As Long, ip As IPEndPoint)
-            Dim idRecibido As Integer = mensajeData.Parametros(0)
-            Dim usuarioFound As Usuario = Nothing
-            Dim index As Integer = -1
+            Dim idRecibido As Integer
+            Try
+                idRecibido = mensajeData.Parametros(0)
+            Catch e As InvalidCastException
+                Console.WriteLine("Server: DISCONNECT - error al castear: " & e.Message)
+                Escuchador.EnviarMensaje(ip, New MensajeData(MensajeData.Tipos.ESTADO_ERROR, {MensajeData.TiposError.BADPROTOCOL}), Nothing, False, idMensajeRespuesta)
+                Return
+            End Try
 
-            For i = 0 To Usuarios.Count - 1
-                If Usuarios(i).ServerId = idRecibido Then
-                    index = i
-                End If
-            Next
-            If index = -1 Then
-                Console.Error.WriteLine("Server: DISCONNECT de un usuario no valido: ID = " & idRecibido)
+            Dim usuarioFound As Usuario = Nothing
+
+            If Not VerificarSeguridad("DISCONNECT", idRecibido, ip, usuarioFound) Then
                 Return
             End If
 
-            Usuarios(index).Conectado = False
-            usuarioFound = Usuarios(index)
+            usuarioFound.Conectado = False
 
             Dim newMensaje As New Mensaje
             newMensaje.UsuarioId = 0
@@ -118,53 +147,92 @@ Namespace Logica
         End Sub
 
         Public Sub OnReceiveALLMSG(mensajeData As MensajeData, idMensajeRespuesta As Long, ip As IPEndPoint)
-            'TODO implementar seguridad para que solo lo puedan pedir usuarios logueados
+            Dim idRecibido As Integer
+            Try
+                idRecibido = mensajeData.Parametros(0)
+            Catch e As InvalidCastException
+                Console.WriteLine("Server: ALLMSG - error al castear: " & e.Message)
+                Escuchador.EnviarMensaje(ip, New MensajeData(MensajeData.Tipos.ESTADO_ERROR, {MensajeData.TiposError.BADPROTOCOL}), Nothing, False, idMensajeRespuesta)
+                Return
+            End Try
+            If Not VerificarSeguridad("ALLMSG", idRecibido, ip, Nothing) Then
+                Return
+            End If
             Escuchador.EnviarMensaje(ip, New MensajeData(MensajeData.Tipos.ESTADO_OK, {Mensajes}), Nothing, False, idMensajeRespuesta)
         End Sub
 
         Public Sub OnReceiveALLUSR(mensajeData As MensajeData, idMensajeRespuesta As Long, ip As IPEndPoint)
-            'TODO implementar seguridad para que solo lo puedan pedir usuarios logueados
+            Dim idRecibido As Integer
+            Try
+                idRecibido = mensajeData.Parametros(0)
+            Catch e As InvalidCastException
+                Console.WriteLine("Server: ALLUSR - error al castear: " & e.Message)
+                Escuchador.EnviarMensaje(ip, New MensajeData(MensajeData.Tipos.ESTADO_ERROR, {MensajeData.TiposError.BADPROTOCOL}), Nothing, False, idMensajeRespuesta)
+                Return
+            End Try
+
+            If Not VerificarSeguridad("ALLUSR", idRecibido, ip, Nothing) Then
+                Return
+            End If
             Escuchador.EnviarMensaje(ip, New MensajeData(MensajeData.Tipos.ESTADO_OK, {Usuarios}), Nothing, False, idMensajeRespuesta)
         End Sub
 
         Public Sub OnReceiveMSG(mensajeData As MensajeData, idMensajeRespuesta As Long, ip As IPEndPoint)
-            Dim msgContenido As Mensaje = mensajeData.Parametros(0)
-            Dim encontrado As Boolean = False
-            For Each u In Usuarios
-                If msgContenido.UsuarioId = u.ServerId Then
-                    encontrado = True
-                End If
-            Next
-            If encontrado Then
-                Escuchador.EnviarMensaje(ip, New MensajeData(MensajeData.Tipos.ESTADO_OK),
-                                         Nothing, False, idMensajeRespuesta)
-                AgregarMensaje(msgContenido)
-            Else
+            Dim msgContenido As Mensaje
+            Try
+                msgContenido = mensajeData.Parametros(0)
+            Catch e As InvalidCastException
+                Console.WriteLine("Server: MSG - error al castear: " & e.Message)
+                Escuchador.EnviarMensaje(ip, New MensajeData(MensajeData.Tipos.ESTADO_ERROR, {MensajeData.TiposError.BADPROTOCOL}), Nothing, False, idMensajeRespuesta)
+                Return
+            End Try
+
+            Dim usuarioFound As Usuario = Nothing
+            If Not VerificarSeguridad("MSG", msgContenido.UsuarioId, ip, usuarioFound) Then
+                ' TODO Mejorar, enviar error especifico
                 Escuchador.EnviarMensaje(ip, New MensajeData(MensajeData.Tipos.ESTADO_ERROR),
                                          Nothing, False, idMensajeRespuesta)
-                Console.WriteLine("Se recibió un mensaje de un usuario invalido")
+                Return
             End If
+
+            Escuchador.EnviarMensaje(ip, New MensajeData(MensajeData.Tipos.ESTADO_OK),
+                                         Nothing, False, idMensajeRespuesta)
+            AgregarMensaje(msgContenido)
         End Sub
 
         Public Sub OnReceiveCHGNAME(mensajeData As MensajeData, idMensajeRespuesta As Long, ip As IPEndPoint)
-            Dim idRecibido As Integer = mensajeData.Parametros(0)
-            Dim usuarioFound As Usuario
-            Dim index As Integer = -1
 
-            For i = 0 To Usuarios.Count - 1
-                If Usuarios(i).ServerId = idRecibido Then
-                    index = i
-                End If
-            Next
-            If index = -1 Then
-                Console.Error.WriteLine("Server: CHGNAME de un usuario no valido: ID = " & idRecibido)
-                ' TODO usuario no valido enviar mensaje
+            Dim idRecibido As Integer
+            Try
+                idRecibido = mensajeData.Parametros(0)
+            Catch e As InvalidCastException
+                Console.WriteLine("Server: CHGNAME - error al castear: " & e.Message)
+                Escuchador.EnviarMensaje(ip, New MensajeData(MensajeData.Tipos.ESTADO_ERROR, {MensajeData.TiposError.BADPROTOCOL}), Nothing, False, idMensajeRespuesta)
+                Return
+            End Try
+
+            Dim usuarioFound As Usuario = Nothing
+
+            If Not VerificarSeguridad("CHGNAME", idRecibido, ip, usuarioFound) Then
                 Return
             End If
-            Dim oldName = Usuarios(index).Nombre
-            Usuarios(index).Nombre = mensajeData.Parametros(1)
-            Usuarios(index).Color = mensajeData.Parametros(2)
-            usuarioFound = Usuarios(index)
+
+            Dim oldName = usuarioFound.Nombre
+            Dim newName As String
+            Dim newColor As Color
+            Try
+                newName = mensajeData.Parametros(1)
+                newColor = mensajeData.Parametros(2)
+            Catch e As InvalidCastException
+                Console.WriteLine("Server: CHGNAME - error al castear: " & e.Message)
+                Escuchador.EnviarMensaje(ip, New MensajeData(MensajeData.Tipos.ESTADO_ERROR, {MensajeData.TiposError.BADPROTOCOL}), Nothing, False, idMensajeRespuesta)
+                Return
+            End Try
+
+            usuarioFound.Nombre = newName
+            usuarioFound.Color = newColor
+
+            Escuchador.EnviarMensaje(usuarioFound.EndPoint, New MensajeData(MensajeData.Tipos.ESTADO_OK), Nothing, False, idMensajeRespuesta)
 
             Dim newMensaje As New Mensaje
             newMensaje.UsuarioId = 0
@@ -172,6 +240,40 @@ Namespace Logica
             newMensaje.Contenido = "El usuario " & oldName & " cambió de nombre a " & usuarioFound.Nombre
             AgregarMensaje(newMensaje)
 
+            EnviarATodos(New MensajeData(MensajeData.Tipos.NEWUSR, {"CHANGE", usuarioFound}))
+        End Sub
+
+        Private Function VerificarSeguridad(ByRef debugTag As String, ByRef idRecibido As Integer, ByRef ip As IPEndPoint, ByRef usuarioFound As Usuario) As Boolean
+            usuarioFound = Usuario.GetUserById(idRecibido, Usuarios)
+
+            If IsNothing(usuarioFound) Then
+                Console.Error.WriteLine("Server: {0} de un usuario no valido: ID = {1}", debugTag, idRecibido)
+                Return False
+            End If
+
+            If usuarioFound.Conectado = False Then
+                Console.Error.WriteLine("Server: {0} de un usuario ya desconectado: ID = {1}", debugTag, idRecibido)
+                Return False
+            End If
+
+            If Not usuarioFound.EndPoint.Address.Equals(ip.Address) OrElse Not usuarioFound.EndPoint.Port = ip.Port Then
+                Console.Error.WriteLine("Server: {0} de un usuario desde un EndPoint diferente: ID = {1}", debugTag, idRecibido)
+                Return False
+            End If
+
+            Return True
+        End Function
+
+        Public Sub EnviarClienteTimeout(idUsuario As Integer)
+            Dim usuarioFound As Usuario = Usuario.GetUserById(idUsuario, Usuarios)
+
+            usuarioFound.Conectado = False
+
+            Dim newMensaje As New Mensaje
+            newMensaje.UsuarioId = 0
+            newMensaje.Hora = DateTime.Now
+            newMensaje.Contenido = "El usuario " & usuarioFound.Nombre & " perdió la conexión."
+            AgregarMensaje(newMensaje)
 
             EnviarATodos(New MensajeData(MensajeData.Tipos.NEWUSR, {"CHANGE", usuarioFound}))
         End Sub

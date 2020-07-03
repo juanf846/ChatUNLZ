@@ -10,9 +10,9 @@ Public Class Usuario
     Public EndPoint As IPEndPoint
 
     Public Shared Function GetUserById(id As Integer, lista As List(Of Usuario)) As Usuario
-        For Each u In lista
-            If id = u.ServerId Then
-                Return u
+        For i = 0 To lista.Count
+            If id = lista(i).ServerId Then
+                Return lista(i)
             End If
         Next
         Return Nothing

@@ -28,6 +28,7 @@
         Public Enum TiposError
             BADPASS
             LOSTCONECTION
+            BADPROTOCOL
         End Enum
 
         Public Tipo As Tipos

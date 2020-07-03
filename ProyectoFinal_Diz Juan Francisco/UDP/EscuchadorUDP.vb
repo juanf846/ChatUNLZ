@@ -103,21 +103,23 @@ Namespace UDP
                     End If
 
 
-                    Debug.log(EscuchadorID, "Actualmente hay " & MensajesSinRespuesta.Count & " mensajes sin respuesta")
                     'Si es una respuesta, busca el primer mensaje
-                    For Each msg In MensajesSinRespuesta
-                        If msg Is Nothing Then
-                            Continue For
-                        End If
-                        If mensajeUDP.IdMensaje = msg.IdMensaje Then
-                            Debug.log(EscuchadorID, "Nuevo mensaje, listener = mensaje")
-                            If msg.OnResponse IsNot Nothing Then
-                                msg.OnResponse.Invoke(mensajeUDP.Contenido, mensajeUDP.IdMensaje, mensajeUDP.EndPoint)
+                    SyncLock MensajesSinRespuesta
+                        Debug.log(EscuchadorID, "Actualmente hay " & MensajesSinRespuesta.Count & " mensajes sin respuesta")
+                        For Each msg In MensajesSinRespuesta
+                            If msg Is Nothing Then
+                                Continue For
                             End If
-                            MensajesSinRespuesta.Remove(msg)
-                            Continue While
-                        End If
-                    Next
+                            If mensajeUDP.IdMensaje = msg.IdMensaje Then
+                                Debug.log(EscuchadorID, "Nuevo mensaje, listener = mensaje")
+                                If msg.OnResponse IsNot Nothing Then
+                                    msg.OnResponse.Invoke(mensajeUDP.Contenido, mensajeUDP.IdMensaje, mensajeUDP.EndPoint)
+                                End If
+                                MensajesSinRespuesta.Remove(msg)
+                                Continue While
+                            End If
+                        Next
+                    End SyncLock
 
                     'Si no es una respuesta, se lo envia al creador del escuchador
                     If mensajeUDP.Contenido.Tipo = MensajeData.Tipos.INFO Then
@@ -237,7 +239,9 @@ Namespace UDP
                 mensajeUDP.TicksParaReenviar = DateTime.Now.Ticks + MENSAJE_RECEIVE_TIMEOUT
                 mensajeUDP.OnResponse = onResponse
                 mensajeUDP.EndPoint = remoteEndPoint
-                MensajesSinRespuesta.Add(mensajeUDP)
+                SyncLock MensajesSinRespuesta
+                    MensajesSinRespuesta.Add(mensajeUDP)
+                End SyncLock
                 Debug.log(EscuchadorID, "Mensaje agregado a no respondidos: " & idMensaje)
             End If
 

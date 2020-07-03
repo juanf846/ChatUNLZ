@@ -169,24 +169,49 @@ Namespace Logica
                     OnReceiveNEWMSG(mensajeData, idMensajeResponse, ip)
                 Case MensajeData.Tipos.NEWUSR
                     OnReceiveNEWUSR(mensajeData, idMensajeResponse, ip)
+                Case MensajeData.Tipos.CLOSED
+                    OnReceiveCLOSED(mensajeData, idMensajeResponse, ip)
                 Case Else
                     Console.WriteLine("Cliente: se recibio un mensaje de tipo no implementado: " & mensajeData.Tipo.ToString)
             End Select
         End Sub
 
         Public Sub OnReceiveNEWMSG(mensajeData As MensajeData, idMensajeResponse As Long, ip As IPEndPoint)
-            Dim mensaje As Mensaje = mensajeData.Parametros(0)
+            If Not VerificarSeguridad("NEWMSG", ip) Then
+                Return
+            End If
+            Dim mensaje As Mensaje
+            Try
+                mensaje = mensajeData.Parametros(0)
+            Catch e As InvalidCastException
+                Console.WriteLine("Cliente: NEWMSG - error al castear: " & e.Message)
+                Escuchador.EnviarMensaje(ip, New MensajeData(MensajeData.Tipos.ESTADO_ERROR, {MensajeData.TiposError.BADPROTOCOL}), Nothing, False, idMensajeResponse)
+                Return
+            End Try
+
             AgregarMensajeAlChat(mensaje, True)
-            'Escuchador.EnviarMensaje(ip, New MensajeData(MensajeData.Tipos.ESTADO_OK), Nothing, False)
+            Escuchador.EnviarMensaje(ip, New MensajeData(MensajeData.Tipos.ESTADO_OK), Nothing, False, idMensajeResponse)
         End Sub
 
         Public Sub OnReceiveNEWUSR(mensajeData As MensajeData, idMensajeResponse As Long, ip As IPEndPoint)
-            Dim tipo As String = mensajeData.Parametros(0)
-            Dim newUsuario As Usuario = mensajeData.Parametros(1)
+            If Not VerificarSeguridad("NEWUSR", ip) Then
+                Return
+            End If
+            Dim tipo As String
+            Dim newUsuario As Usuario
+            Try
+                tipo = mensajeData.Parametros(0)
+                newUsuario = mensajeData.Parametros(1)
+            Catch e As InvalidCastException
+                Console.WriteLine("Cliente: NEWUSR - error al castear: " & e.Message)
+                Escuchador.EnviarMensaje(ip, New MensajeData(MensajeData.Tipos.ESTADO_ERROR, {MensajeData.TiposError.BADPROTOCOL}), Nothing, False, idMensajeResponse)
+                Return
+            End Try
             If tipo = "ADD" Then
                 Usuarios.Add(newUsuario)
                 FrmChatActivo.AgregarUsuario(newUsuario)
 
+                Escuchador.EnviarMensaje(ip, New MensajeData(MensajeData.Tipos.ESTADO_OK), Nothing, False, idMensajeResponse)
             ElseIf tipo = "CHANGE" Then
                 Dim index As Integer = -1
                 For i = 0 To Usuarios.Count - 1
@@ -194,6 +219,11 @@ Namespace Logica
                         index = i
                     End If
                 Next
+                If index = -1 Then
+                    Console.Error.WriteLine("Cliente: usuario no encontrado " & newUsuario.ServerId)
+                    EnviarALLUSR()
+                    Return
+                End If
                 Usuarios(index) = newUsuario
 
                 FrmChatActivo.AgregarUsuarios(Usuarios)
@@ -204,14 +234,19 @@ Namespace Logica
                     Next
                 End SyncLock
 
-                If index = -1 Then
-                    Console.Error.WriteLine("Cliente: usuario no encontrado " & newUsuario.ServerId)
-                    EnviarALLUSR()
-                End If
+                Escuchador.EnviarMensaje(ip, New MensajeData(MensajeData.Tipos.ESTADO_OK), Nothing, False, idMensajeResponse)
             Else
                 Console.Error.WriteLine("Cliente: tipo de NEWUSR no valido " & tipo)
+                Escuchador.EnviarMensaje(ip, New MensajeData(MensajeData.Tipos.ESTADO_ERROR, {MensajeData.TiposError.BADPROTOCOL}), Nothing, False, idMensajeResponse)
             End If
+        End Sub
 
+        Public Sub OnReceiveCLOSED(mensajeData As MensajeData, idMensajeResponse As Long, ip As IPEndPoint)
+            If Not VerificarSeguridad("CLOSED", ip) Then
+                Return
+            End If
+            MsgBox("El servidor se cerró")
+            Terminate()
         End Sub
 
         Private Sub AgregarMensajeAlChat(mensaje As Mensaje, agregarAMensajes As Boolean)
@@ -235,6 +270,14 @@ Namespace Logica
                 Mensajes.Add(mensaje)
             End If
         End Sub
+
+        Private Function VerificarSeguridad(ByRef debugTag As String, ByRef ip As IPEndPoint) As Boolean
+            If Not IPServidor.Address.Equals(ip.Address) OrElse Not IPServidor.Port = ip.Port Then
+                Console.Error.WriteLine("Cliente: {0} del servidor desde un EndPoint diferente", debugTag)
+                Return False
+            End If
+            Return True
+        End Function
 
         Public Sub Terminate()
             If Not Terminando Then
