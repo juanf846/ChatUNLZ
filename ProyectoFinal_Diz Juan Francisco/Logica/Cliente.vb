@@ -29,7 +29,16 @@ Namespace Logica
                 Dim newMensajeDataINFO As New MensajeData(MensajeData.Tipos.INFO)
                 Dim m As Action(Of UDP.MensajeData, Long, IPEndPoint) =
                 Sub(ByVal mensajeRecibido As UDP.MensajeData, idRespuesta As Long, IPRespuesta As IPEndPoint)
-                    EnviarCONNECT(mensajeRecibido.Parametros(1), ip)
+                    If mensajeRecibido.Tipo = MensajeData.Tipos.ESTADO_OK Then
+                        EnviarCONNECT(mensajeRecibido.Parametros(1), ip)
+                    ElseIf mensajeRecibido.Tipo = MensajeData.Tipos.ESTADO_ERROR AndAlso
+                            mensajeRecibido.Parametros(0) = MensajeData.TiposError.LOSTCONECTION Then
+                        MsgBox("No se pudo conectar al servidor")
+                        Terminate()
+                    Else
+                        MsgBox("Error critico (C39)")
+                    End If
+
                 End Sub
 
                 Escuchador.EnviarMensaje(ip, newMensajeDataINFO, m, True)
@@ -48,7 +57,7 @@ Namespace Logica
                 Do
                     contraseña = InputBox("Ingrese la contraseña del servidor")
                     If contraseña = "" Then
-                        FrmChatActivo.Close()
+                        Terminate()
                         Return
                     End If
                     If contraseña.Length < 8 Then
@@ -74,8 +83,12 @@ Namespace Logica
                             mensajeRecibido.Parametros(0) = MensajeData.TiposError.BADPASS Then
                         MsgBox("La contraseña ingresada no es valida")
                         EnviarCONNECT(True, ip)
+                    ElseIf mensajeRecibido.Tipo = MensajeData.Tipos.ESTADO_ERROR AndAlso
+                            mensajeRecibido.Parametros(0) = MensajeData.TiposError.LOSTCONECTION Then
+                        MsgBox("No se pudo conectar al servidor")
+                        Terminate()
                     Else
-                        MsgBox("Error critico (C65)")
+                        MsgBox("Error critico (C82)")
                     End If
                 End Sub, True)
         End Sub
@@ -214,13 +227,16 @@ Namespace Logica
         End Sub
 
         Public Sub Terminate()
-            Terminando = True
-            If Conectado Then
-                Dim newMensajeDataDISCONNECT As New MensajeData(MensajeData.Tipos.DISCONNECT, {UsuarioLocal.ServerId})
-                Escuchador.EnviarMensaje(IPServidor, newMensajeDataDISCONNECT, Nothing, False)
-                Threading.Thread.Sleep(1000)
+            If Not Terminando Then
+                Terminando = True
+                FrmChatActivo.Close()
+                If Conectado Then
+                    Dim newMensajeDataDISCONNECT As New MensajeData(MensajeData.Tipos.DISCONNECT, {UsuarioLocal.ServerId})
+                    Escuchador.EnviarMensaje(IPServidor, newMensajeDataDISCONNECT, Nothing, False)
+                    Threading.Thread.Sleep(1000)
+                End If
+                Escuchador.Terminate()
             End If
-            Escuchador.Terminate()
         End Sub
 
     End Class

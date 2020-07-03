@@ -32,7 +32,6 @@ Partial Class FrmConectarServer
         '
         'BtnAceptar
         '
-        Me.BtnAceptar.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.BtnAceptar.Location = New System.Drawing.Point(146, 69)
         Me.BtnAceptar.Name = "BtnAceptar"
         Me.BtnAceptar.Size = New System.Drawing.Size(75, 23)
@@ -42,7 +41,6 @@ Partial Class FrmConectarServer
         '
         'BtnCancelar
         '
-        Me.BtnCancelar.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.BtnCancelar.Location = New System.Drawing.Point(227, 69)
         Me.BtnCancelar.Name = "BtnCancelar"
         Me.BtnCancelar.Size = New System.Drawing.Size(75, 23)

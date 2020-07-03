@@ -27,6 +27,7 @@
         <Serializable()>
         Public Enum TiposError
             BADPASS
+            LOSTCONECTION
         End Enum
 
         Public Tipo As Tipos

@@ -36,13 +36,6 @@ Public Class FrmChat
         TxtEntrada.Text = ""
     End Sub
 
-    Private Sub FrmChat_Close(sender As Object, e As EventArgs) Handles Me.Closed
-        Cliente.Terminate()
-        If Not IsNothing(Server) Then
-            Server.Terminate()
-        End If
-    End Sub
-
     Private Sub LtbChat_DrawItem(ByVal sender As System.Object, ByVal e As System.Windows.Forms.DrawItemEventArgs) Handles LtbChat.DrawItem
         e.DrawBackground()
 
@@ -92,5 +85,12 @@ Public Class FrmChat
 
     Private Sub BtnDesconectar_Click(sender As Object, e As EventArgs) Handles BtnDesconectar.Click
         Me.Close()
+    End Sub
+
+    Private Sub FrmChat_Close(sender As Object, e As EventArgs) Handles Me.Closed
+        Cliente.Terminate()
+        If Not IsNothing(Server) Then
+            Server.Terminate()
+        End If
     End Sub
 End Class

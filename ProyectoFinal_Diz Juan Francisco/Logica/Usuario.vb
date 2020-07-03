@@ -7,9 +7,7 @@ Public Class Usuario
     Public Color As Color
     Public Conectado As Boolean = True
     <NonSerialized()>
-    Public IPRecibir As IPEndPoint
-    <NonSerialized()>
-    Public IPEnviar As IPEndPoint
+    Public EndPoint As IPEndPoint
 
     Public Shared Function GetUserById(id As Integer, lista As List(Of Usuario)) As Usuario
         For Each u In lista

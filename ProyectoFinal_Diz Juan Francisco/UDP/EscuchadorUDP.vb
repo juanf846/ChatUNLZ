@@ -25,8 +25,11 @@ Namespace UDP
 
         Private EscuchadorID As Integer
 
-        Private Const VERSION As Integer = 2
+        Private Const VERSION As Integer = 3
         Private Formatter As New Formatters.Binary.BinaryFormatter()
+        Private CLIENT_RECEIVE_TIMEOUT As Integer = 100               'Valor en milisegundos  (0.1 segundos) (1 seg = 1000 milis)
+        Private MENSAJE_RECEIVE_TIMEOUT As Integer = 20000000         'Valor en ticks         (2 segundos)   (1 seg = 10000000 tick)
+        Private MENSAJE_REINTENTOS_MAXIMOS As Integer = 3
 
         Private Puerto As Integer
         Private ThreadMain As Thread
@@ -51,7 +54,7 @@ Namespace UDP
             Else
                 Client = New UdpClient(puerto)
             End If
-            Client.Client.ReceiveTimeout = 100
+            Client.Client.ReceiveTimeout = CLIENT_RECEIVE_TIMEOUT
             Debug.log(EscuchadorID, "Iniciado en puerto " & puerto)
 
             SetClaveCifrado(claveCifrado)
@@ -109,7 +112,7 @@ Namespace UDP
                         If mensajeUDP.IdMensaje = msg.IdMensaje Then
                             Debug.log(EscuchadorID, "Nuevo mensaje, listener = mensaje")
                             If msg.OnResponse IsNot Nothing Then
-                                msg.OnResponse.Invoke(mensajeUDP.Contenido, mensajeUDP.IdMensaje, mensajeUDP.IPResponse)
+                                msg.OnResponse.Invoke(mensajeUDP.Contenido, mensajeUDP.IdMensaje, mensajeUDP.EndPoint)
                             End If
                             MensajesSinRespuesta.Remove(msg)
                             Continue While
@@ -147,6 +150,38 @@ Namespace UDP
                         End Try
                     Next
                     MensajesParaEnviar.Clear()
+                End SyncLock
+                SyncLock MensajesSinRespuesta
+                    Dim mensajesAEliminar As New List(Of MensajeUDP)
+                    For Each msg In MensajesSinRespuesta
+                        Dim ticksActuales = DateTime.Now.Ticks
+                        If msg.TicksParaReenviar < ticksActuales Then
+                            If msg.ReintentosRestantes = 0 Then
+                                Debug.log(EscuchadorID, "No se pudo enviar el mensaje " & msg.IdMensaje & " despues de " &
+                                          MENSAJE_REINTENTOS_MAXIMOS & " intentos")
+                                mensajesAEliminar.Add(msg)
+
+                                Dim newMensajeData As New UDP.MensajeData(UDP.MensajeData.Tipos.ESTADO_ERROR)
+                                newMensajeData.Parametros = {UDP.MensajeData.TiposError.LOSTCONECTION}
+
+                                msg.OnResponse.Invoke(newMensajeData, msg.IdMensaje, msg.EndPoint)
+                            Else
+                                Dim stream As New IO.MemoryStream
+                                Formatter.Serialize(stream, msg)
+                                stream.Position = 0
+
+                                msg.ReintentosRestantes -= 1
+                                msg.TicksParaReenviar = ticksActuales + MENSAJE_RECEIVE_TIMEOUT
+                                Debug.log(EscuchadorID, "Reenviando el mensaje " & msg.IdMensaje & " intento " & msg.ReintentosRestantes)
+
+                                Dim bytes() As Byte = stream.ToArray()
+                                Client.Send(bytes, bytes.Length, msg.EndPoint)
+                            End If
+                        End If
+                    Next
+                    For Each msg In mensajesAEliminar
+                        MensajesSinRespuesta.Remove(msg)
+                    Next
                 End SyncLock
             End While
 
@@ -194,8 +229,10 @@ Namespace UDP
 
             'Agregar al array
             If requireResponse Then
+                mensajeUDP.ReintentosRestantes = MENSAJE_REINTENTOS_MAXIMOS
+                mensajeUDP.TicksParaReenviar = DateTime.Now.Ticks + MENSAJE_RECEIVE_TIMEOUT
                 mensajeUDP.OnResponse = onResponse
-                mensajeUDP.IPResponse = remoteEndPoint
+                mensajeUDP.EndPoint = remoteEndPoint
                 MensajesSinRespuesta.Add(mensajeUDP)
                 Debug.log(EscuchadorID, "Mensaje agregado a no respondidos: " & idMensaje)
             End If

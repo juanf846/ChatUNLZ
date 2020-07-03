@@ -13,7 +13,10 @@ Namespace UDP
         Public Contenido As Object
         Public Cifrado As Boolean
         <NonSerialized>
-        Public Enviado As Date
+        Public TicksParaReenviar As Long
+        <NonSerialized>
+        Public ReintentosRestantes As Integer
+
         ''' <summary>
         ''' * Mensaje es el recibido
         ''' * ID para enviar el mensaje de respuesta
@@ -22,7 +25,7 @@ Namespace UDP
         <NonSerialized>
         Public OnResponse As Action(Of MensajeData, Long, IPEndPoint)
         <NonSerialized>
-        Public IPResponse As IPEndPoint
+        Public EndPoint As IPEndPoint
 
         Public Shared Function GetMsgById(id As Long, lista As List(Of MensajeUDP)) As MensajeUDP
             For Each u In lista

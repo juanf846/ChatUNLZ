@@ -38,7 +38,7 @@ Namespace Logica
 
         Public Sub EnviarATodos(newMensajeData As MensajeData)
             For Each u In Usuarios
-                Escuchador.EnviarMensaje(u.IPRecibir, newMensajeData, Nothing, False)
+                Escuchador.EnviarMensaje(u.EndPoint, newMensajeData, Nothing, False)
             Next
         End Sub
 
@@ -55,7 +55,7 @@ Namespace Logica
                 Case MensajeData.Tipos.MSG
                     OnReceiveMSG(mensaje, idMensajeResponse, ip)
                 Case MensajeData.Tipos.CHGNAME
-                    onReceiveCHGNAME(mensaje, idMensajeResponse, ip)
+                    OnReceiveCHGNAME(mensaje, idMensajeResponse, ip)
                 Case Else
                     Console.WriteLine("Server: se recibio un mensaje de tipo no implementado: " & mensaje.Tipo.ToString)
             End Select
@@ -66,14 +66,13 @@ Namespace Logica
             Dim newUsuario As Usuario = mensajeData.Parametros(0)
             newUsuario.ServerId = nextServerId
             nextServerId += 1
-            newUsuario.IPEnviar = ip
-            newUsuario.IPRecibir = New IPEndPoint(ip.Address, mensajeData.Parametros(1))
+            newUsuario.EndPoint = ip
             Usuarios.Add(newUsuario)
 
             ' Envia el OK al nuevo usuario
             Dim mensajeDataOK As New MensajeData(MensajeData.Tipos.ESTADO_OK)
             mensajeDataOK.Parametros = New Object() {newUsuario.ServerId}
-            Escuchador.EnviarMensaje(newUsuario.IPRecibir, mensajeDataOK, Nothing, False, idMensajeRespuesta)
+            Escuchador.EnviarMensaje(newUsuario.EndPoint, mensajeDataOK, Nothing, False, idMensajeRespuesta)
 
             ' Envia la info del nuevo usuario a los demas
             Dim newMensajeDataNEWUSR As New MensajeData(MensajeData.Tipos.NEWUSR)
