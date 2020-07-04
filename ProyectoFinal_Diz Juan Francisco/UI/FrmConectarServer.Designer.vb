@@ -41,6 +41,7 @@ Partial Class FrmConectarServer
         '
         'BtnCancelar
         '
+        Me.BtnCancelar.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.BtnCancelar.Location = New System.Drawing.Point(227, 69)
         Me.BtnCancelar.Name = "BtnCancelar"
         Me.BtnCancelar.Size = New System.Drawing.Size(75, 23)
@@ -94,6 +95,8 @@ Partial Class FrmConectarServer
         Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.TxtPuerto)
         Me.Controls.Add(Me.Label1)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
+        Me.MaximizeBox = False
         Me.Name = "FrmConectarServer"
         Me.Text = "Conectarse a un servidor"
         Me.ResumeLayout(False)

@@ -35,14 +35,17 @@ Partial Class FrmChat
         '
         'TxtEntrada
         '
-        Me.TxtEntrada.Location = New System.Drawing.Point(204, 418)
+        Me.TxtEntrada.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.TxtEntrada.Location = New System.Drawing.Point(204, 275)
         Me.TxtEntrada.Name = "TxtEntrada"
-        Me.TxtEntrada.Size = New System.Drawing.Size(363, 20)
+        Me.TxtEntrada.Size = New System.Drawing.Size(350, 20)
         Me.TxtEntrada.TabIndex = 1
         '
         'BtnEnviar
         '
-        Me.BtnEnviar.Location = New System.Drawing.Point(573, 415)
+        Me.BtnEnviar.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.BtnEnviar.Location = New System.Drawing.Point(560, 272)
         Me.BtnEnviar.Name = "BtnEnviar"
         Me.BtnEnviar.Size = New System.Drawing.Size(75, 23)
         Me.BtnEnviar.TabIndex = 2
@@ -69,7 +72,8 @@ Partial Class FrmChat
         '
         'BtnDesconectar
         '
-        Me.BtnDesconectar.Location = New System.Drawing.Point(33, 416)
+        Me.BtnDesconectar.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.BtnDesconectar.Location = New System.Drawing.Point(33, 273)
         Me.BtnDesconectar.Name = "BtnDesconectar"
         Me.BtnDesconectar.Size = New System.Drawing.Size(127, 23)
         Me.BtnDesconectar.TabIndex = 6
@@ -78,17 +82,19 @@ Partial Class FrmChat
         '
         'LtbUsuarios
         '
+        Me.LtbUsuarios.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.LtbUsuarios.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable
         Me.LtbUsuarios.FormattingEnabled = True
-        Me.LtbUsuarios.Location = New System.Drawing.Point(13, 223)
+        Me.LtbUsuarios.Location = New System.Drawing.Point(16, 120)
         Me.LtbUsuarios.Name = "LtbUsuarios"
-        Me.LtbUsuarios.Size = New System.Drawing.Size(167, 95)
+        Me.LtbUsuarios.Size = New System.Drawing.Size(167, 134)
         Me.LtbUsuarios.TabIndex = 7
         '
         'Label4
         '
         Me.Label4.AutoSize = True
-        Me.Label4.Location = New System.Drawing.Point(13, 204)
+        Me.Label4.Location = New System.Drawing.Point(13, 94)
         Me.Label4.Name = "Label4"
         Me.Label4.Size = New System.Drawing.Size(110, 13)
         Me.Label4.TabIndex = 8
@@ -105,11 +111,14 @@ Partial Class FrmChat
         '
         'LtbChat
         '
+        Me.LtbChat.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.LtbChat.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable
         Me.LtbChat.FormattingEnabled = True
         Me.LtbChat.Location = New System.Drawing.Point(204, 12)
         Me.LtbChat.Name = "LtbChat"
-        Me.LtbChat.Size = New System.Drawing.Size(444, 394)
+        Me.LtbChat.Size = New System.Drawing.Size(431, 251)
         Me.LtbChat.TabIndex = 11
         Me.LtbChat.TabStop = False
         '
@@ -118,7 +127,7 @@ Partial Class FrmChat
         Me.AcceptButton = Me.BtnEnviar
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(660, 450)
+        Me.ClientSize = New System.Drawing.Size(647, 307)
         Me.Controls.Add(Me.LtbChat)
         Me.Controls.Add(Me.BtnCambiar)
         Me.Controls.Add(Me.Label4)
@@ -128,6 +137,7 @@ Partial Class FrmChat
         Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.BtnEnviar)
         Me.Controls.Add(Me.TxtEntrada)
+        Me.MinimumSize = New System.Drawing.Size(663, 346)
         Me.Name = "FrmChat"
         Me.Text = "UNLZ chat"
         Me.ResumeLayout(False)

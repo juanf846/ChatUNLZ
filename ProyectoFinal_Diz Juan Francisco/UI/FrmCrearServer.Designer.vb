@@ -42,6 +42,8 @@ Partial Class FrmCrearServer
         '
         'TxtPuerto
         '
+        Me.TxtPuerto.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.TxtPuerto.Location = New System.Drawing.Point(82, 12)
         Me.TxtPuerto.Name = "TxtPuerto"
         Me.TxtPuerto.Size = New System.Drawing.Size(87, 20)
@@ -59,6 +61,8 @@ Partial Class FrmCrearServer
         '
         'TxtContraseña
         '
+        Me.TxtContraseña.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.TxtContraseña.Enabled = False
         Me.TxtContraseña.Location = New System.Drawing.Point(82, 38)
         Me.TxtContraseña.Name = "TxtContraseña"
@@ -67,6 +71,7 @@ Partial Class FrmCrearServer
         '
         'BtnCancelar
         '
+        Me.BtnCancelar.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.BtnCancelar.Location = New System.Drawing.Point(223, 89)
         Me.BtnCancelar.Name = "BtnCancelar"
         Me.BtnCancelar.Size = New System.Drawing.Size(75, 23)
@@ -76,6 +81,7 @@ Partial Class FrmCrearServer
         '
         'BtnAceptar
         '
+        Me.BtnAceptar.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.BtnAceptar.Location = New System.Drawing.Point(142, 89)
         Me.BtnAceptar.Name = "BtnAceptar"
         Me.BtnAceptar.Size = New System.Drawing.Size(75, 23)
@@ -107,6 +113,8 @@ Partial Class FrmCrearServer
         Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.TxtPuerto)
         Me.Controls.Add(Me.Label1)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
+        Me.MaximizeBox = False
         Me.Name = "FrmCrearServer"
         Me.Text = "Crear servidor"
         Me.ResumeLayout(False)

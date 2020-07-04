@@ -32,15 +32,19 @@ Partial Class FrmMain
         '
         'TxtNombre
         '
+        Me.TxtNombre.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.TxtNombre.Location = New System.Drawing.Point(12, 25)
         Me.TxtNombre.Name = "TxtNombre"
-        Me.TxtNombre.Size = New System.Drawing.Size(194, 20)
+        Me.TxtNombre.Size = New System.Drawing.Size(262, 20)
         Me.TxtNombre.TabIndex = 0
         '
         'Label1
         '
+        Me.Label1.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(61, 9)
+        Me.Label1.Location = New System.Drawing.Point(97, 9)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(96, 13)
         Me.Label1.TabIndex = 1
@@ -48,26 +52,32 @@ Partial Class FrmMain
         '
         'BtnCrear
         '
+        Me.BtnCrear.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.BtnCrear.Location = New System.Drawing.Point(39, 95)
         Me.BtnCrear.Name = "BtnCrear"
-        Me.BtnCrear.Size = New System.Drawing.Size(140, 23)
+        Me.BtnCrear.Size = New System.Drawing.Size(208, 23)
         Me.BtnCrear.TabIndex = 2
         Me.BtnCrear.Text = "Crear servidor"
         Me.BtnCrear.UseVisualStyleBackColor = True
         '
         'BtnUnirse
         '
+        Me.BtnUnirse.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.BtnUnirse.Location = New System.Drawing.Point(39, 124)
         Me.BtnUnirse.Name = "BtnUnirse"
-        Me.BtnUnirse.Size = New System.Drawing.Size(140, 23)
+        Me.BtnUnirse.Size = New System.Drawing.Size(208, 23)
         Me.BtnUnirse.TabIndex = 3
         Me.BtnUnirse.Text = "Unirse a un servidor"
         Me.BtnUnirse.UseVisualStyleBackColor = True
         '
         'Label2
         '
+        Me.Label2.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Label2.AutoSize = True
-        Me.Label2.Location = New System.Drawing.Point(94, 50)
+        Me.Label2.Location = New System.Drawing.Point(127, 50)
         Me.Label2.Name = "Label2"
         Me.Label2.Size = New System.Drawing.Size(31, 13)
         Me.Label2.TabIndex = 4
@@ -75,10 +85,12 @@ Partial Class FrmMain
         '
         'BtnColor
         '
+        Me.BtnColor.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.BtnColor.BackColor = System.Drawing.Color.Red
-        Me.BtnColor.Location = New System.Drawing.Point(97, 66)
+        Me.BtnColor.Location = New System.Drawing.Point(131, 66)
         Me.BtnColor.Name = "BtnColor"
-        Me.BtnColor.Size = New System.Drawing.Size(25, 23)
+        Me.BtnColor.Size = New System.Drawing.Size(23, 23)
         Me.BtnColor.TabIndex = 5
         Me.BtnColor.UseVisualStyleBackColor = False
         '
@@ -86,13 +98,15 @@ Partial Class FrmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(218, 191)
+        Me.ClientSize = New System.Drawing.Size(286, 169)
         Me.Controls.Add(Me.BtnColor)
         Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.BtnUnirse)
         Me.Controls.Add(Me.BtnCrear)
         Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.TxtNombre)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
+        Me.MaximizeBox = False
         Me.Name = "FrmMain"
         Me.Text = "UNLZ chat"
         Me.ResumeLayout(False)

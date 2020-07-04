@@ -44,6 +44,7 @@ Partial Class FrmCargando
         Me.ClientSize = New System.Drawing.Size(229, 65)
         Me.Controls.Add(Me.LblTexto)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
+        Me.MaximizeBox = False
         Me.Name = "FrmCargando"
         Me.Text = "Cargando..."
         Me.ResumeLayout(False)
