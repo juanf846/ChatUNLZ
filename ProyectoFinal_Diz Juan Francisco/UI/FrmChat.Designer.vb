@@ -78,6 +78,7 @@ Partial Class FrmChat
         '
         'LtbUsuarios
         '
+        Me.LtbUsuarios.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable
         Me.LtbUsuarios.FormattingEnabled = True
         Me.LtbUsuarios.Location = New System.Drawing.Point(13, 223)
         Me.LtbUsuarios.Name = "LtbUsuarios"

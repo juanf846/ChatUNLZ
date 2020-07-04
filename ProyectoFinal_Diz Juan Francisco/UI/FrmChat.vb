@@ -6,6 +6,11 @@ Public Class FrmChat
     Private Cliente As Logica.Cliente
     Private Server As Logica.Server
 
+    Public Class ListBoxItem
+        Public Texto As String
+        Public Color As Color
+    End Class
+
     Public Shared Sub Open(clientMode As Boolean, ipAddress As IPEndPoint, usuarioInfo As Usuario, contraseña As String)
         Dim frmChat As New FrmChat
         frmChat.ClientMode = clientMode
@@ -37,8 +42,19 @@ Public Class FrmChat
     Private Sub LtbChat_DrawItem(ByVal sender As System.Object, ByVal e As System.Windows.Forms.DrawItemEventArgs) Handles LtbChat.DrawItem
         e.DrawBackground()
 
+        If e.Index = -1 Then Return
         Dim customColor = New SolidBrush(LtbChat.Items(e.Index).Color)
         e.Graphics.DrawString(LtbChat.Items(e.Index).Texto, e.Font, customColor, e.Bounds.X, e.Bounds.Y)
+
+        e.DrawFocusRectangle()
+    End Sub
+
+    Private Sub LtbUsuarios_DrawItem(ByVal sender As System.Object, ByVal e As System.Windows.Forms.DrawItemEventArgs) Handles LtbUsuarios.DrawItem
+        e.DrawBackground()
+
+        If e.Index = -1 Then Return
+        Dim customColor = New SolidBrush(LtbUsuarios.Items(e.Index).Color)
+        e.Graphics.DrawString(LtbUsuarios.Items(e.Index).Texto, e.Font, customColor, e.Bounds.X, e.Bounds.Y)
 
         e.DrawFocusRectangle()
     End Sub
@@ -49,8 +65,11 @@ Public Class FrmChat
 
     Public Sub AgregarUsuario(u As Usuario)
         If u.Conectado Then
-            LtbUsuarios.Items.Add(u.Nombre)
-            LtbUsuarios.TopIndex = LtbUsuarios.Items.Count - 1
+            Dim item As New ListBoxItem
+            item.Texto = u.Nombre
+            item.Color = u.Color
+            LtbUsuarios.Items.Add(item)
+            LtbUsuarios.TopIndex = LtbChat.Items.Count - 1
         End If
     End Sub
 
@@ -60,11 +79,6 @@ Public Class FrmChat
             AgregarUsuario(u)
         Next
     End Sub
-
-    Public Class ListBoxItem
-        Public Texto As String
-        Public Color As Color
-    End Class
 
     Public Sub AgregarMensaje(usuarioNombre As String, mensaje As String, hora As Date, c As Color)
         Dim salida = usuarioNombre & " (" & FormatDateTime(hora, DateFormat.ShortTime) & "): " & mensaje
