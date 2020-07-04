@@ -35,8 +35,13 @@ Public Class FrmChat
     End Sub
 
     Private Sub BtnEnviar_Click(sender As Object, e As EventArgs) Handles BtnEnviar.Click
+        If TxtEntrada.Text.Trim().Length = 0 Then Return
         Cliente.EnviarMSG(TxtEntrada.Text)
         TxtEntrada.Text = ""
+    End Sub
+
+    Private Sub TxtEntrada_TextChanged(sender As Object, e As EventArgs) Handles TxtEntrada.TextChanged
+        BtnEnviar.Enabled = TxtEntrada.Text.Trim().Length > 0
     End Sub
 
     Private Sub LtbChat_DrawItem(ByVal sender As System.Object, ByVal e As System.Windows.Forms.DrawItemEventArgs) Handles LtbChat.DrawItem
@@ -109,4 +114,5 @@ Public Class FrmChat
             Server.Terminate()
         End If
     End Sub
+
 End Class
