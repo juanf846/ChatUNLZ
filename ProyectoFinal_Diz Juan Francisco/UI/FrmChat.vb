@@ -99,9 +99,18 @@ Public Class FrmChat
     End Sub
 
     Private Sub BtnCambiar_Click(sender As Object, e As EventArgs) Handles BtnCambiar.Click
-        UsuarioInfo.Nombre = "test"
-        UsuarioInfo.Color = Color.Red
-        Cliente.EnviarCHGNAME("test", Color.Red)
+        Dim frm As New FrmCambiarNombre(UsuarioInfo.Nombre, UsuarioInfo.Color)
+        frm.ShowDialog()
+        If frm.Cancelado Then
+            Return
+        End If
+
+        LblNombre.Text = frm.NewNombre
+        LblNombre.ForeColor = frm.NewColor
+
+        UsuarioInfo.Nombre = frm.NewNombre
+        UsuarioInfo.Color = frm.NewColor
+        Cliente.EnviarCHGNAME(UsuarioInfo.Nombre, UsuarioInfo.Color)
     End Sub
 
     Private Sub BtnDesconectar_Click(sender As Object, e As EventArgs) Handles BtnDesconectar.Click

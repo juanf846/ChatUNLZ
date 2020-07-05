@@ -77,6 +77,12 @@
     <Compile Include="Logica\Mensaje.vb" />
     <Compile Include="UDP\CifradorAES.vb" />
     <Compile Include="UDP\EscuchadorUDP.vb" />
+    <Compile Include="UI\FrmCambiarNombre.Designer.vb">
+      <DependentUpon>FrmCambiarNombre.vb</DependentUpon>
+    </Compile>
+    <Compile Include="UI\FrmCambiarNombre.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\FrmCargando.Designer.vb">
       <DependentUpon>FrmCargando.vb</DependentUpon>
     </Compile>
@@ -129,6 +135,9 @@
     <Compile Include="Logica\Usuario.vb" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="UI\FrmCambiarNombre.resx">
+      <DependentUpon>FrmCambiarNombre.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\FrmCargando.resx">
       <DependentUpon>FrmCargando.vb</DependentUpon>
     </EmbeddedResource>
