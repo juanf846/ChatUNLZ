@@ -23,7 +23,7 @@ Namespace UDP
         ''' * IP a la que enviar la respuesta
         ''' </summary>
         <NonSerialized>
-        Public OnResponse As Action(Of MensajeData, Long, IPEndPoint)
+        Public OnResponse As Action(Of Logica.MensajeData, Long, IPEndPoint)
         <NonSerialized>
         Public EndPoint As IPEndPoint
 

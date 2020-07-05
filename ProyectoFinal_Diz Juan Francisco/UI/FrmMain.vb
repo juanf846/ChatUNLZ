@@ -22,7 +22,7 @@
             Return
         End If
 
-        Dim usuario As New Usuario
+        Dim usuario As New Logica.Usuario
         usuario.Nombre = nombre
         usuario.Color = BtnColor.BackColor
 
@@ -42,7 +42,7 @@
             Return
         End If
 
-        Dim usuario As New Usuario
+        Dim usuario As New Logica.Usuario
         usuario.Nombre = nombre
         usuario.Color = BtnColor.BackColor
 

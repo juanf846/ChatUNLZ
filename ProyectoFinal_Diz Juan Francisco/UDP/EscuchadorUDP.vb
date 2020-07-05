@@ -4,6 +4,7 @@ Imports System.Text
 Imports System.Threading
 Imports System.Runtime.Serialization
 Imports System.Security
+Imports ProyectoFinal_Diz_Juan_Francisco.Logica
 
 Namespace UDP
     Public Module Debug
@@ -34,7 +35,7 @@ Namespace UDP
         Private Puerto As Integer
         Private ThreadMain As Thread
         Private Client As UdpClient
-        Public OnNewMessage As Action(Of UDP.MensajeData, Long, IPEndPoint)
+        Public OnNewMessage As Action(Of Logica.MensajeData, Long, IPEndPoint)
         Private Cifrador As CifradorAES
 
         Private Ejecutandose As Boolean = True
@@ -163,8 +164,8 @@ Namespace UDP
                                           MENSAJE_REINTENTOS_MAXIMOS & " intentos")
                                 mensajesAEliminar.Add(msg)
 
-                                Dim newMensajeData As New UDP.MensajeData(UDP.MensajeData.Tipos.ESTADO_ERROR)
-                                newMensajeData.Parametros = {UDP.MensajeData.TiposError.LOSTCONECTION}
+                                Dim newMensajeData As New Logica.MensajeData(Logica.MensajeData.Tipos.ESTADO_ERROR)
+                                newMensajeData.Parametros = {Logica.MensajeData.TiposError.LOSTCONECTION}
 
                                 msg.OnResponse.Invoke(newMensajeData, msg.IdMensaje, msg.EndPoint)
                             Else
@@ -255,16 +256,16 @@ Namespace UDP
             MensajesParaEnviar.Add(New MensajeParaEnviar(bytes, remoteEndPoint))
         End Sub
 
-        Private Sub OnNewINFO(mensajeData As UDP.MensajeData, idMensajeRespuesta As Long, remoteEndPoint As IPEndPoint)
-            Dim newMensajeData As New UDP.MensajeData(UDP.MensajeData.Tipos.ESTADO_OK)
+        Private Sub OnNewINFO(mensajeData As Logica.MensajeData, idMensajeRespuesta As Long, remoteEndPoint As IPEndPoint)
+            Dim newMensajeData As New Logica.MensajeData(Logica.MensajeData.Tipos.ESTADO_OK)
             newMensajeData.Parametros = {VERSION, UsaCifrado}
 
             EnviarMensaje(remoteEndPoint, newMensajeData, Nothing, False, idMensajeRespuesta, True)
         End Sub
 
         Private Sub OnBADPASS(idMensajeRespuesta As Long, remoteEndPoint As IPEndPoint)
-            Dim newMensajeData As New UDP.MensajeData(UDP.MensajeData.Tipos.ESTADO_ERROR)
-            newMensajeData.Parametros = {UDP.MensajeData.TiposError.BADPASS}
+            Dim newMensajeData As New Logica.MensajeData(Logica.MensajeData.Tipos.ESTADO_ERROR)
+            newMensajeData.Parametros = {Logica.MensajeData.TiposError.BADPASS}
 
             EnviarMensaje(remoteEndPoint, newMensajeData, Nothing, False, idMensajeRespuesta, True)
         End Sub

@@ -1,5 +1,5 @@
 ﻿Imports System.Net
-Imports ProyectoFinal_Diz_Juan_Francisco.UDP
+Imports ProyectoFinal_Diz_Juan_Francisco.Logica
 
 Namespace Logica
     Public Class Cliente
@@ -33,8 +33,8 @@ Namespace Logica
 
             If Not conexionLocal Then
                 Dim newMensajeDataINFO As New MensajeData(MensajeData.Tipos.INFO)
-                Dim m As Action(Of UDP.MensajeData, Long, IPEndPoint) =
-                Sub(ByVal mensajeRecibido As UDP.MensajeData, idRespuesta As Long, IPRespuesta As IPEndPoint)
+                Dim m As Action(Of Logica.MensajeData, Long, IPEndPoint) =
+                Sub(ByVal mensajeRecibido As Logica.MensajeData, idRespuesta As Long, IPRespuesta As IPEndPoint)
                     If mensajeRecibido.Tipo = MensajeData.Tipos.ESTADO_OK Then
                         EnviarCONNECT(mensajeRecibido.Parametros(1), ip)
                     ElseIf mensajeRecibido.Tipo = MensajeData.Tipos.ESTADO_ERROR AndAlso
@@ -79,7 +79,7 @@ Namespace Logica
 
 
             Escuchador.EnviarMensaje(ip, newCONNECT,
-                Sub(ByVal mensajeRecibido As UDP.MensajeData, idRespuesta As Long, IPRespuesta As IPEndPoint)
+                Sub(ByVal mensajeRecibido As Logica.MensajeData, idRespuesta As Long, IPRespuesta As IPEndPoint)
                     If mensajeRecibido.Tipo = MensajeData.Tipos.ESTADO_OK Then
                         UsuarioLocal.ServerId = CInt(mensajeRecibido.Parametros(0))
                         Conectado = True
@@ -105,7 +105,7 @@ Namespace Logica
 
         Public Sub EnviarALLMSG()
             Escuchador.EnviarMensaje(IPServidor, New MensajeData(MensajeData.Tipos.ALLMSG, {UsuarioLocal.ServerId}),
-                    Sub(ByVal mensaje As UDP.MensajeData, idMensajeResponse As Long, IPResponse As IPEndPoint)
+                    Sub(ByVal mensaje As Logica.MensajeData, idMensajeResponse As Long, IPResponse As IPEndPoint)
                         If mensaje.Tipo = MensajeData.Tipos.ESTADO_OK Then
                             FrmChatActivo.LimpiarMensajes()
                             Mensajes.Clear()
@@ -117,7 +117,7 @@ Namespace Logica
         End Sub
         Public Sub EnviarALLUSR()
             Escuchador.EnviarMensaje(IPServidor, New MensajeData(MensajeData.Tipos.ALLUSR, {UsuarioLocal.ServerId}),
-                    Sub(ByVal mensaje As UDP.MensajeData, idMensajeResponse As Long, IPResponse As IPEndPoint)
+                    Sub(ByVal mensaje As Logica.MensajeData, idMensajeResponse As Long, IPResponse As IPEndPoint)
                         If mensaje.Tipo = MensajeData.Tipos.ESTADO_OK Then
                             Usuarios = mensaje.Parametros(0)
                             FrmChatActivo.AgregarUsuarios(Usuarios)
@@ -127,19 +127,19 @@ Namespace Logica
 
 
         Public Sub EnviarMSG(texto As String)
-            Dim msg As New UDP.MensajeData
-            msg.Tipo = UDP.MensajeData.Tipos.MSG
+            Dim msg As New Logica.MensajeData
+            msg.Tipo = Logica.MensajeData.Tipos.MSG
             Dim msgContenido As New Mensaje
             msgContenido.Hora = DateTime.Now
             msgContenido.UsuarioId = UsuarioLocal.ServerId
             msgContenido.Contenido = texto
             msg.Parametros = New Object() {msgContenido}
 
-            Dim method As Action(Of UDP.MensajeData, Long, IPEndPoint) = Sub(ByVal mensaje As UDP.MensajeData, idMensajeResponse As Long, IPResponse As IPEndPoint)
-                                                                             If mensaje.Tipo = MensajeData.Tipos.ESTADO_OK Then
-                                                                                 Console.WriteLine("(Cliente) El mensaje se envió correctamente")
-                                                                             End If
-                                                                         End Sub
+            Dim method As Action(Of Logica.MensajeData, Long, IPEndPoint) = Sub(ByVal mensaje As Logica.MensajeData, idMensajeResponse As Long, IPResponse As IPEndPoint)
+                                                                                If mensaje.Tipo = MensajeData.Tipos.ESTADO_OK Then
+                                                                                    Console.WriteLine("(Cliente) El mensaje se envió correctamente")
+                                                                                End If
+                                                                            End Sub
             Console.WriteLine(IPServidor.ToString)
             Escuchador.EnviarMensaje(IPServidor, msg, method, True)
         End Sub
@@ -147,8 +147,8 @@ Namespace Logica
         Public Sub EnviarCHGNAME(nombre As String, color As Color)
             UsuarioLocal.Nombre = nombre
             UsuarioLocal.Color = color
-            Dim method As Action(Of UDP.MensajeData, Long, IPEndPoint) =
-                Sub(ByVal mensaje As UDP.MensajeData, idMensajeResponse As Long, IPResponse As IPEndPoint)
+            Dim method As Action(Of Logica.MensajeData, Long, IPEndPoint) =
+                Sub(ByVal mensaje As Logica.MensajeData, idMensajeResponse As Long, IPResponse As IPEndPoint)
                     If mensaje.Tipo = MensajeData.Tipos.ESTADO_OK Then
                         Console.WriteLine("(Cliente) El nombre cambio correctamente")
                     End If

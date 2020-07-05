@@ -1,5 +1,5 @@
 ﻿Imports System.Net
-Imports ProyectoFinal_Diz_Juan_Francisco.UDP
+Imports ProyectoFinal_Diz_Juan_Francisco.Logica
 
 Namespace Logica
     Public Class Server
@@ -41,8 +41,8 @@ Namespace Logica
                 If Not u.Conectado Then
                     Continue For
                 End If
-                Dim m As Action(Of UDP.MensajeData, Long, IPEndPoint) =
-                Sub(ByVal mensajeRecibido As UDP.MensajeData, idRespuesta As Long, IPRespuesta As IPEndPoint)
+                Dim m As Action(Of Logica.MensajeData, Long, IPEndPoint) =
+                Sub(ByVal mensajeRecibido As Logica.MensajeData, idRespuesta As Long, IPRespuesta As IPEndPoint)
                     If mensajeRecibido.Tipo = MensajeData.Tipos.ESTADO_ERROR Then
                         Dim tipoError As MensajeData.TiposError
                         Try

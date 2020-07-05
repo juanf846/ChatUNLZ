@@ -1,7 +1,7 @@
 ﻿Imports System.Net
 
 Public Class FrmChat
-    Private UsuarioInfo As Usuario
+    Private UsuarioInfo As Logica.Usuario
     Private ClientMode As Boolean
     Private Cliente As Logica.Cliente
     Private Server As Logica.Server
@@ -11,7 +11,7 @@ Public Class FrmChat
         Public Color As Color
     End Class
 
-    Public Shared Sub Open(clientMode As Boolean, ipAddress As IPEndPoint, usuarioInfo As Usuario, contraseña As String)
+    Public Shared Sub Open(clientMode As Boolean, ipAddress As IPEndPoint, usuarioInfo As Logica.Usuario, contraseña As String)
         Dim frmChat As New FrmChat
         frmChat.ClientMode = clientMode
         frmChat.UsuarioInfo = usuarioInfo
@@ -68,7 +68,7 @@ Public Class FrmChat
         LtbChat.SelectedIndex = -1
     End Sub
 
-    Public Sub AgregarUsuario(u As Usuario)
+    Public Sub AgregarUsuario(u As Logica.Usuario)
         If u.Conectado Then
             Dim item As New ListBoxItem
             item.Texto = u.Nombre
@@ -78,7 +78,7 @@ Public Class FrmChat
         End If
     End Sub
 
-    Public Sub AgregarUsuarios(usuarios As List(Of Usuario))
+    Public Sub AgregarUsuarios(usuarios As List(Of Logica.Usuario))
         LtbUsuarios.Items.Clear()
         For Each u In usuarios
             AgregarUsuario(u)

@@ -1,4 +1,4 @@
-﻿Namespace UDP
+﻿Namespace Logica
     <Serializable()>
     Public Class MensajeData
 
