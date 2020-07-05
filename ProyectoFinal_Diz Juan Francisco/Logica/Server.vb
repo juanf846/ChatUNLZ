@@ -93,7 +93,10 @@ Namespace Logica
                 Return
             End Try
 
-            newUsuario.ServerId = nextServerId
+            Dim newID As Integer = ((DateTime.Now.Ticks / 10000000) +
+                (nextServerId << 16)) Mod Integer.MaxValue
+
+            newUsuario.ServerId = newID
             nextServerId += 1
             newUsuario.EndPoint = ip
             Usuarios.Add(newUsuario)
