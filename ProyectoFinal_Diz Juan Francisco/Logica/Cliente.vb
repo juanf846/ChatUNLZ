@@ -5,6 +5,7 @@ Namespace Logica
     Public Class Cliente
 
         Private Escuchador As UDP.EscuchadorUDP
+        Private BEANSenderActivo As BEANSender
         Private Mensajes As New List(Of Mensaje)
         Private Usuarios As New List(Of Usuario)
         Private UsuarioLocal As Usuario
@@ -85,6 +86,8 @@ Namespace Logica
                         Conectado = True
                         FrmCargandoActivo.Close()
                         FrmChatActivo.Enabled = True
+                        BEANSenderActivo = New BEANSender(Escuchador, AddressOf OnLostConection, IPServidor, UsuarioLocal.ServerId)
+                        BEANSenderActivo.Iniciar()
                         EnviarALLUSR()
                         EnviarALLMSG()
                         Console.WriteLine("Cliente conectado correctamente con el id: " & UsuarioLocal.ServerId)
@@ -112,6 +115,9 @@ Namespace Logica
                             For Each m In mensaje.Parametros(0)
                                 AgregarMensajeAlChat(m, True)
                             Next
+                        ElseIf mensaje.Tipo = MensajeData.Tipos.ESTADO_ERROR AndAlso
+                               mensaje.Parametros(0) = MensajeData.TiposError.LOSTCONECTION Then
+                            OnLostConection()
                         End If
                     End Sub, True)
         End Sub
@@ -121,6 +127,9 @@ Namespace Logica
                         If mensaje.Tipo = MensajeData.Tipos.ESTADO_OK Then
                             Usuarios = mensaje.Parametros(0)
                             FrmChatActivo.AgregarUsuarios(Usuarios)
+                        ElseIf mensaje.Tipo = MensajeData.Tipos.ESTADO_ERROR AndAlso
+                               mensaje.Parametros(0) = MensajeData.TiposError.LOSTCONECTION Then
+                            OnLostConection()
                         End If
                     End Sub, True)
         End Sub
@@ -138,6 +147,9 @@ Namespace Logica
             Dim method As Action(Of Logica.MensajeData, Long, IPEndPoint) = Sub(ByVal mensaje As Logica.MensajeData, idMensajeResponse As Long, IPResponse As IPEndPoint)
                                                                                 If mensaje.Tipo = MensajeData.Tipos.ESTADO_OK Then
                                                                                     Console.WriteLine("(Cliente) El mensaje se envió correctamente")
+                                                                                ElseIf mensaje.Tipo = MensajeData.Tipos.ESTADO_ERROR AndAlso
+                                                                                       mensaje.Parametros(0) = MensajeData.TiposError.LOSTCONECTION Then
+                                                                                    OnLostConection()
                                                                                 End If
                                                                             End Sub
             Console.WriteLine(IPServidor.ToString)
@@ -151,6 +163,9 @@ Namespace Logica
                 Sub(ByVal mensaje As Logica.MensajeData, idMensajeResponse As Long, IPResponse As IPEndPoint)
                     If mensaje.Tipo = MensajeData.Tipos.ESTADO_OK Then
                         Console.WriteLine("(Cliente) El nombre cambio correctamente")
+                    ElseIf mensaje.Tipo = MensajeData.Tipos.ESTADO_ERROR AndAlso
+                           mensaje.Parametros(0) = MensajeData.TiposError.LOSTCONECTION Then
+                        OnLostConection()
                     End If
                 End Sub
 
@@ -279,6 +294,11 @@ Namespace Logica
             Return True
         End Function
 
+        Private Sub OnLostConection()
+            MsgBox("Se perdió la conexión con el servidor")
+            Terminate()
+        End Sub
+
         Public Sub Terminate()
             If Not Terminando Then
                 Terminando = True
@@ -291,6 +311,47 @@ Namespace Logica
                 Escuchador.Terminate()
             End If
         End Sub
+
+        Public Class BEANSender
+            Private Thread As Threading.Thread
+            Private Continuar = True
+            Private Escuchador As UDP.EscuchadorUDP
+            Private LostConnection As Action
+            Private IPServer As IPEndPoint
+            Private IdUsuario As Integer
+
+
+            Public Sub New(ByRef escuchador As UDP.EscuchadorUDP, ByRef onLostConnection As Action, ipServer As IPEndPoint, idUsuario As Integer)
+                Me.Escuchador = escuchador
+                Me.LostConnection = onLostConnection
+                Me.IPServer = ipServer
+                Me.IdUsuario = idUsuario
+            End Sub
+
+            Public Sub Iniciar()
+                Thread = New Threading.Thread(AddressOf Sender)
+                Thread.Start()
+            End Sub
+
+            Private Sub Sender()
+                While Continuar
+                    Escuchador.EnviarMensaje(IPServer, New MensajeData(MensajeData.Tipos.BEAN, {IdUsuario}),
+                         Sub(ByVal mensaje As Logica.MensajeData, idMensajeResponse As Long, IPResponse As IPEndPoint)
+                             If mensaje.Tipo = MensajeData.Tipos.ESTADO_ERROR Then
+                                 If mensaje.Parametros(0) = MensajeData.TiposError.LOSTCONECTION Then
+                                     LostConnection.Invoke()
+                                     Terminate()
+                                 End If
+                             End If
+                         End Sub, True)
+                    If Continuar Then Threading.Thread.Sleep(5000)
+                End While
+            End Sub
+
+            Public Sub Terminate()
+                Continuar = False
+            End Sub
+        End Class
 
     End Class
 End Namespace

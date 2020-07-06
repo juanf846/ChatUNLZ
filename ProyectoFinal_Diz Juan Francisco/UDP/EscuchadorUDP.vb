@@ -26,7 +26,7 @@ Namespace UDP
 
         Private EscuchadorID As Integer
 
-        Private Const VERSION As Integer = 3
+        Private Const VERSION As Integer = 5
         Private Formatter As New Formatters.Binary.BinaryFormatter()
         Private CLIENT_RECEIVE_TIMEOUT As Integer = 100               'Valor en milisegundos  (0.1 segundos) (1 seg = 1000 milis)
         Private MENSAJE_RECEIVE_TIMEOUT As Integer = 20000000         'Valor en ticks         (2 segundos)   (1 seg = 10000000 tick)
@@ -156,7 +156,8 @@ Namespace UDP
                 End SyncLock
                 SyncLock MensajesSinRespuesta
                     Dim mensajesAEliminar As New List(Of MensajeUDP)
-                    For Each msg In MensajesSinRespuesta
+                    For i = 0 To MensajesSinRespuesta.Count - 1
+                        Dim msg = MensajesSinRespuesta(i)
                         Dim ticksActuales = DateTime.Now.Ticks
                         If msg.TicksParaReenviar < ticksActuales Then
                             If msg.ReintentosRestantes = 0 Then

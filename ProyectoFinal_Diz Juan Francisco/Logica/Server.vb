@@ -1,5 +1,4 @@
 ﻿Imports System.Net
-Imports ProyectoFinal_Diz_Juan_Francisco.Logica
 
 Namespace Logica
     Public Class Server
@@ -77,6 +76,8 @@ Namespace Logica
                     OnReceiveMSG(mensaje, idMensajeResponse, ip)
                 Case MensajeData.Tipos.CHGNAME
                     OnReceiveCHGNAME(mensaje, idMensajeResponse, ip)
+                Case MensajeData.Tipos.BEAN
+                    OnReceiveBEAN(mensaje, idMensajeResponse, ip)
                 Case Else
                     Console.WriteLine("Server: se recibio un mensaje de tipo no implementado: " & mensaje.Tipo.ToString)
             End Select
@@ -244,6 +245,25 @@ Namespace Logica
             AgregarMensaje(newMensaje)
 
             EnviarATodos(New MensajeData(MensajeData.Tipos.NEWUSR, {"CHANGE", usuarioFound}))
+        End Sub
+
+        Public Sub OnReceiveBEAN(mensajeData As MensajeData, idMensajeRespuesta As Long, ip As IPEndPoint)
+            Dim idRecibido As Integer
+            Try
+                idRecibido = mensajeData.Parametros(0)
+            Catch e As InvalidCastException
+                Console.WriteLine("Server: BEAN - error al castear: " & e.Message)
+                Escuchador.EnviarMensaje(ip, New MensajeData(MensajeData.Tipos.ESTADO_ERROR, {MensajeData.TiposError.BADPROTOCOL}), Nothing, False, idMensajeRespuesta)
+                Return
+            End Try
+
+            Dim usuarioFound As Usuario = Nothing
+            If Not VerificarSeguridad("BEAN", idRecibido, ip, usuarioFound) Then
+                Return
+            End If
+
+            Escuchador.EnviarMensaje(ip, New MensajeData(MensajeData.Tipos.ESTADO_OK), Nothing, False, idMensajeRespuesta)
+
         End Sub
 
         Private Function VerificarSeguridad(ByRef debugTag As String, ByRef idRecibido As Integer, ByRef ip As IPEndPoint, ByRef usuarioFound As Usuario) As Boolean
