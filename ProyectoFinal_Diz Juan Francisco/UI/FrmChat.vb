@@ -85,14 +85,27 @@ Public Class FrmChat
         Next
     End Sub
 
+    Public Sub AgregarMensajes(usuarioNombre As String(), mensaje As String(), hora As Date(), c As Color())
+        Dim items(usuarioNombre.Length - 1) As ListBoxItem
+        For i = 0 To usuarioNombre.Length - 1
+            items(i) = NewListBoxItem(usuarioNombre(i), mensaje(i), hora(i), c(i))
+        Next
+        LtbChat.Items.AddRange(items)
+        LtbChat.TopIndex = LtbChat.Items.Count - 1
+    End Sub
     Public Sub AgregarMensaje(usuarioNombre As String, mensaje As String, hora As Date, c As Color)
+        Dim item As ListBoxItem = NewListBoxItem(usuarioNombre, mensaje, hora, c)
+        LtbChat.Items.Add(item)
+        LtbChat.TopIndex = LtbChat.Items.Count - 1
+    End Sub
+
+    Private Function NewListBoxItem(usuarioNombre As String, mensaje As String, hora As Date, c As Color) As ListBoxItem
         Dim salida = usuarioNombre & " (" & FormatDateTime(hora, DateFormat.ShortTime) & "): " & mensaje
         Dim item As New ListBoxItem
         item.Texto = salida
         item.Color = c
-        LtbChat.Items.Add(item)
-        LtbChat.TopIndex = LtbChat.Items.Count - 1
-    End Sub
+        Return item
+    End Function
 
     Public Sub LimpiarMensajes()
         LtbChat.Items.Clear()

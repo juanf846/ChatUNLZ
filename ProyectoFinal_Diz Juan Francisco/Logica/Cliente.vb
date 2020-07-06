@@ -112,9 +112,7 @@ Namespace Logica
                         If mensaje.Tipo = MensajeData.Tipos.ESTADO_OK Then
                             FrmChatActivo.LimpiarMensajes()
                             Mensajes.Clear()
-                            For Each m In mensaje.Parametros(0)
-                                AgregarMensajeAlChat(m, True)
-                            Next
+                            AgregarMensajesAlChat(mensaje.Parametros(0), True)
                         ElseIf mensaje.Tipo = MensajeData.Tipos.ESTADO_ERROR AndAlso
                                mensaje.Parametros(0) = MensajeData.TiposError.LOSTCONECTION Then
                             OnLostConection()
@@ -244,9 +242,7 @@ Namespace Logica
                 FrmChatActivo.AgregarUsuarios(Usuarios)
                 SyncLock Mensajes
                     FrmChatActivo.LimpiarMensajes()
-                    For Each m In Mensajes
-                        AgregarMensajeAlChat(m, False)
-                    Next
+                    AgregarMensajesAlChat(Mensajes, False)
                 End SyncLock
 
                 Escuchador.EnviarMensaje(ip, New MensajeData(MensajeData.Tipos.ESTADO_OK), Nothing, False, idMensajeResponse)
@@ -283,6 +279,35 @@ Namespace Logica
             FrmChatActivo.AgregarMensaje(nombreUsuario, mensaje.Contenido, mensaje.Hora, colorUsuario)
             If agregarAMensajes Then
                 Mensajes.Add(mensaje)
+            End If
+        End Sub
+
+        Private Sub AgregarMensajesAlChat(mensajes As List(Of Mensaje), agregarAMensajes As Boolean)
+            Dim nombreUsuario(mensajes.Count - 1) As String
+            Dim contenido(mensajes.Count - 1) As String
+            Dim hora(mensajes.Count - 1) As Date
+            Dim colorUsuario(mensajes.Count - 1) As Color
+
+            For i = 0 To mensajes.Count - 1
+                Dim mensaje As Mensaje = mensajes(i)
+                For Each u In Usuarios
+                    If u.ServerId = mensaje.UsuarioId Then
+                        nombreUsuario(i) = u.Nombre
+                        colorUsuario(i) = u.Color
+                    End If
+                Next
+
+                If mensaje.UsuarioId = 0 Then
+                    nombreUsuario(i) = "Server"
+                    colorUsuario(i) = Color.Black
+                End If
+                contenido(i) = mensaje.Contenido
+                hora(i) = mensaje.Hora
+            Next
+
+            FrmChatActivo.AgregarMensajes(nombreUsuario, contenido, hora, colorUsuario)
+            If agregarAMensajes Then
+                Me.Mensajes.AddRange(mensajes)
             End If
         End Sub
 
