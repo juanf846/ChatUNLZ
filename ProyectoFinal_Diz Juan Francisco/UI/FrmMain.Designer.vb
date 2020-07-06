@@ -108,6 +108,7 @@ Partial Class FrmMain
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.MaximizeBox = False
         Me.Name = "FrmMain"
+        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "UNLZ chat"
         Me.ResumeLayout(False)
         Me.PerformLayout()

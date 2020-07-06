@@ -93,6 +93,7 @@ Partial Class FrmCambiarNombre
         Me.Controls.Add(Me.TxtNombre)
         Me.Controls.Add(Me.Label1)
         Me.Name = "FrmCambiarNombre"
+        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
         Me.Text = "Cambiar nombre"
         Me.ResumeLayout(False)
         Me.PerformLayout()

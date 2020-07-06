@@ -72,6 +72,7 @@ Partial Class FrmCrearServer
         'BtnCancelar
         '
         Me.BtnCancelar.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.BtnCancelar.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.BtnCancelar.Location = New System.Drawing.Point(223, 89)
         Me.BtnCancelar.Name = "BtnCancelar"
         Me.BtnCancelar.Size = New System.Drawing.Size(75, 23)
@@ -116,6 +117,7 @@ Partial Class FrmCrearServer
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.MaximizeBox = False
         Me.Name = "FrmCrearServer"
+        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
         Me.Text = "Crear servidor"
         Me.ResumeLayout(False)
         Me.PerformLayout()

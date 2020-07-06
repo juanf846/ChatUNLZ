@@ -40,6 +40,7 @@ Namespace Logica
                         EnviarCONNECT(mensajeRecibido.Parametros(1), ip)
                     ElseIf mensajeRecibido.Tipo = MensajeData.Tipos.ESTADO_ERROR AndAlso
                             mensajeRecibido.Parametros(0) = MensajeData.TiposError.LOSTCONECTION Then
+                        FrmCargandoActivo.ForzarCierre = True
                         MsgBox("No se pudo conectar al servidor")
                         FrmCargandoActivo.Close()
                         Terminate()
@@ -84,8 +85,10 @@ Namespace Logica
                     If mensajeRecibido.Tipo = MensajeData.Tipos.ESTADO_OK Then
                         UsuarioLocal.ServerId = CInt(mensajeRecibido.Parametros(0))
                         Conectado = True
+                        FrmCargandoActivo.ForzarCierre = True
                         FrmCargandoActivo.Close()
                         FrmChatActivo.Enabled = True
+                        FrmChatActivo.TopMost = True
                         BEANSenderActivo = New BEANSender(Escuchador, AddressOf OnLostConection, IPServidor, UsuarioLocal.ServerId)
                         BEANSenderActivo.Iniciar()
                         EnviarALLUSR()
@@ -97,6 +100,7 @@ Namespace Logica
                         EnviarCONNECT(True, ip)
                     ElseIf mensajeRecibido.Tipo = MensajeData.Tipos.ESTADO_ERROR AndAlso
                             mensajeRecibido.Parametros(0) = MensajeData.TiposError.LOSTCONECTION Then
+                        FrmCargandoActivo.ForzarCierre = True
                         MsgBox("No se pudo conectar al servidor")
                         FrmCargandoActivo.Close()
                         Terminate()
@@ -155,11 +159,11 @@ Namespace Logica
         End Sub
 
         Public Sub EnviarCHGNAME(nombre As String, color As Color)
-            UsuarioLocal.Nombre = nombre
-            UsuarioLocal.Color = color
             Dim method As Action(Of Logica.MensajeData, Long, IPEndPoint) =
                 Sub(ByVal mensaje As Logica.MensajeData, idMensajeResponse As Long, IPResponse As IPEndPoint)
                     If mensaje.Tipo = MensajeData.Tipos.ESTADO_OK Then
+                        UsuarioLocal.Nombre = nombre
+                        UsuarioLocal.Color = color
                         Console.WriteLine("(Cliente) El nombre cambio correctamente")
                     ElseIf mensaje.Tipo = MensajeData.Tipos.ESTADO_ERROR AndAlso
                            mensaje.Parametros(0) = MensajeData.TiposError.LOSTCONECTION Then
@@ -331,7 +335,7 @@ Namespace Logica
                 If Conectado Then
                     Dim newMensajeDataDISCONNECT As New MensajeData(MensajeData.Tipos.DISCONNECT, {UsuarioLocal.ServerId})
                     Escuchador.EnviarMensaje(IPServidor, newMensajeDataDISCONNECT, Nothing, False)
-                    Threading.Thread.Sleep(1000)
+                    Threading.Thread.Sleep(500)
                 End If
                 Escuchador.Terminate()
             End If

@@ -26,7 +26,8 @@
         usuario.Nombre = nombre
         usuario.Color = BtnColor.BackColor
 
-        FrmChat.Open(False, New Net.IPEndPoint(Net.IPAddress.Any, puerto), usuario, contraseña)
+        Me.Hide()
+        FrmChat.Open(False, New Net.IPEndPoint(Net.IPAddress.Any, puerto), usuario, contraseña, Me)
 
 
     End Sub
@@ -47,8 +48,8 @@
         usuario.Color = BtnColor.BackColor
 
         Console.WriteLine("Conectando a " & IPServer.ToString)
-
-        FrmChat.Open(True, IPServer, usuario, Nothing)
+        Me.Hide()
+        FrmChat.Open(True, IPServer, usuario, Nothing, Me)
     End Sub
 
     Private Sub FrmMain_Closed(sender As Object, e As EventArgs) Handles Me.Closed

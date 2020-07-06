@@ -139,6 +139,7 @@ Partial Class FrmChat
         Me.Controls.Add(Me.TxtEntrada)
         Me.MinimumSize = New System.Drawing.Size(663, 346)
         Me.Name = "FrmChat"
+        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "UNLZ chat"
         Me.ResumeLayout(False)
         Me.PerformLayout()

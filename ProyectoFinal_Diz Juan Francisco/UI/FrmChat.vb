@@ -6,18 +6,20 @@ Public Class FrmChat
     Private Cliente As Logica.Cliente
     Private Server As Logica.Server
 
+    Private FrmMain As FrmMain
+
     Public Class ListBoxItem
         Public Texto As String
         Public Color As Color
     End Class
 
-    Public Shared Sub Open(clientMode As Boolean, ipAddress As IPEndPoint, usuarioInfo As Logica.Usuario, contraseña As String)
+    Public Shared Sub Open(clientMode As Boolean, ipAddress As IPEndPoint, usuarioInfo As Logica.Usuario, contraseña As String, ByRef mainFrm As FrmMain)
         Dim frmChat As New FrmChat
         frmChat.ClientMode = clientMode
         frmChat.UsuarioInfo = usuarioInfo
         frmChat.LblNombre.Text = usuarioInfo.Nombre
         frmChat.LblNombre.ForeColor = usuarioInfo.Color
-
+        frmChat.FrmMain = mainFrm
         If Not clientMode Then
             frmChat.Server = New Logica.Server(ipAddress.Port, contraseña)
             If Not frmChat.Server.Funcionando Then
@@ -135,6 +137,7 @@ Public Class FrmChat
         If Not IsNothing(Server) Then
             Server.Terminate()
         End If
+        FrmMain.Show()
     End Sub
 
 End Class

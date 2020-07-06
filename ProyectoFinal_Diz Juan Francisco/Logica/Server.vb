@@ -304,7 +304,7 @@ Namespace Logica
         Public Sub Terminate()
             Funcionando = False
             EnviarATodos(New MensajeData(MensajeData.Tipos.CLOSED, {}))
-            Threading.Thread.Sleep(1000)
+            Threading.Thread.Sleep(500)
             Escuchador.Terminate()
         End Sub
     End Class

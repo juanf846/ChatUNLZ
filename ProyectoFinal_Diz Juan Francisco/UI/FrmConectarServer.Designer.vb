@@ -98,6 +98,7 @@ Partial Class FrmConectarServer
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.MaximizeBox = False
         Me.Name = "FrmConectarServer"
+        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
         Me.Text = "Conectarse a un servidor"
         Me.ResumeLayout(False)
         Me.PerformLayout()
