@@ -22,6 +22,7 @@ Partial Class FrmCrearServer
     'No lo modifique con el editor de código.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(FrmCrearServer))
         Me.Label1 = New System.Windows.Forms.Label()
         Me.TxtPuerto = New System.Windows.Forms.TextBox()
         Me.Label2 = New System.Windows.Forms.Label()
@@ -115,6 +116,7 @@ Partial Class FrmCrearServer
         Me.Controls.Add(Me.TxtPuerto)
         Me.Controls.Add(Me.Label1)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
+        Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.MaximizeBox = False
         Me.Name = "FrmCrearServer"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent

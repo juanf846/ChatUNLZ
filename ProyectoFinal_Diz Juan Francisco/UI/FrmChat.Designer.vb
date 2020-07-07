@@ -22,6 +22,7 @@ Partial Class FrmChat
     'No lo modifique con el editor de código.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(FrmChat))
         Me.TxtEntrada = New System.Windows.Forms.TextBox()
         Me.BtnEnviar = New System.Windows.Forms.Button()
         Me.Label1 = New System.Windows.Forms.Label()
@@ -116,6 +117,7 @@ Partial Class FrmChat
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.LtbChat.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable
         Me.LtbChat.FormattingEnabled = True
+        Me.LtbChat.HorizontalScrollbar = True
         Me.LtbChat.Location = New System.Drawing.Point(204, 12)
         Me.LtbChat.Name = "LtbChat"
         Me.LtbChat.Size = New System.Drawing.Size(431, 251)
@@ -137,6 +139,7 @@ Partial Class FrmChat
         Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.BtnEnviar)
         Me.Controls.Add(Me.TxtEntrada)
+        Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.MinimumSize = New System.Drawing.Size(663, 346)
         Me.Name = "FrmChat"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen

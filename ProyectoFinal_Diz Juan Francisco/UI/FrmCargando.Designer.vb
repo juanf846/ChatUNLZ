@@ -22,6 +22,7 @@ Partial Class FrmCargando
     'No lo modifique con el editor de código.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(FrmCargando))
         Me.LblTexto = New System.Windows.Forms.Label()
         Me.SuspendLayout()
         '
@@ -45,6 +46,7 @@ Partial Class FrmCargando
         Me.ControlBox = False
         Me.Controls.Add(Me.LblTexto)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
+        Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.MaximizeBox = False
         Me.MinimizeBox = False
         Me.Name = "FrmCargando"

@@ -46,6 +46,13 @@ Public Class FrmChat
         BtnEnviar.Enabled = TxtEntrada.Text.Trim().Length > 0
     End Sub
 
+    Private Sub LtbChat_DrawItem(ByVal sender As System.Object, ByVal e As System.Windows.Forms.MeasureItemEventArgs) Handles LtbChat.MeasureItem
+        Dim textSize = TextRenderer.MeasureText(LtbChat.Items(e.Index).Texto, LtbChat.Font).Width + 20
+        If textSize > LtbChat.HorizontalExtent Then
+            LtbChat.HorizontalExtent = textSize
+        End If
+    End Sub
+
     Private Sub LtbChat_DrawItem(ByVal sender As System.Object, ByVal e As System.Windows.Forms.DrawItemEventArgs) Handles LtbChat.DrawItem
         e.DrawBackground()
 

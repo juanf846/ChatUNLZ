@@ -22,6 +22,7 @@ Partial Class FrmCambiarNombre
     'No lo modifique con el editor de código.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(FrmCambiarNombre))
         Me.Label1 = New System.Windows.Forms.Label()
         Me.TxtNombre = New System.Windows.Forms.TextBox()
         Me.BtnColor = New System.Windows.Forms.Button()
@@ -92,10 +93,10 @@ Partial Class FrmCambiarNombre
         Me.Controls.Add(Me.BtnColor)
         Me.Controls.Add(Me.TxtNombre)
         Me.Controls.Add(Me.Label1)
+        Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Name = "FrmCambiarNombre"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
         Me.Text = "Cambiar nombre"
-        Me.TopMost = True
         Me.ResumeLayout(False)
         Me.PerformLayout()
 

@@ -36,6 +36,9 @@ Namespace Logica
                 Dim newMensajeDataINFO As New MensajeData(MensajeData.Tipos.INFO)
                 Dim m As Action(Of Logica.MensajeData, Long, IPEndPoint) =
                 Sub(ByVal mensajeRecibido As Logica.MensajeData, idRespuesta As Long, IPRespuesta As IPEndPoint)
+                    If Not VerificarSeguridad("EnviarINFO", IPRespuesta) Then
+                        Return
+                    End If
                     If mensajeRecibido.Tipo = MensajeData.Tipos.ESTADO_OK Then
                         EnviarCONNECT(mensajeRecibido.Parametros(1), ip)
                     ElseIf mensajeRecibido.Tipo = MensajeData.Tipos.ESTADO_ERROR AndAlso
@@ -45,7 +48,18 @@ Namespace Logica
                         FrmCargandoActivo.Close()
                         Terminate()
                     Else
-                        MsgBox("Error critico (C39)")
+                        FrmCargandoActivo.ForzarCierre = True
+                        MsgBox("No se pudo conectar al servidor")
+                        FrmCargandoActivo.Close()
+                        Terminate()
+
+                        Dim causa = ""
+                        Try
+                            causa = CType(mensajeRecibido.Parametros(0), MensajeData.TiposError).ToString
+                        Catch ex As Exception
+                            causa = "No se pudo castear el tipo de error (" & mensajeRecibido.Parametros(0) & ")"
+                        End Try
+                        Console.Error.WriteLine("Cliente: INFO - error desconocido: " + causa)
                     End If
 
                 End Sub
@@ -82,13 +96,18 @@ Namespace Logica
 
             Escuchador.EnviarMensaje(ip, newCONNECT,
                 Sub(ByVal mensajeRecibido As Logica.MensajeData, idRespuesta As Long, IPRespuesta As IPEndPoint)
+                    If Not VerificarSeguridad("EnviarCONNECT", IPRespuesta) Then
+                        Return
+                    End If
                     If mensajeRecibido.Tipo = MensajeData.Tipos.ESTADO_OK Then
                         UsuarioLocal.ServerId = CInt(mensajeRecibido.Parametros(0))
                         Conectado = True
                         FrmCargandoActivo.ForzarCierre = True
                         FrmCargandoActivo.Close()
                         FrmChatActivo.Enabled = True
+                        FrmChatActivo.WindowState = FormWindowState.Normal
                         FrmChatActivo.TopMost = True
+                        FrmChatActivo.TopMost = False
                         BEANSenderActivo = New BEANSender(Escuchador, AddressOf OnLostConection, IPServidor, UsuarioLocal.ServerId)
                         BEANSenderActivo.Iniciar()
                         EnviarALLUSR()
@@ -105,7 +124,17 @@ Namespace Logica
                         FrmCargandoActivo.Close()
                         Terminate()
                     Else
-                        MsgBox("Error critico (C82)")
+                        FrmCargandoActivo.ForzarCierre = True
+                        MsgBox("No se pudo conectar al servidor")
+                        FrmCargandoActivo.Close()
+                        Terminate()
+                        Dim causa = ""
+                        Try
+                            causa = CType(mensajeRecibido.Parametros(0), MensajeData.TiposError).ToString
+                        Catch ex As Exception
+                            causa = "No se pudo castear el tipo de error (" & mensajeRecibido.Parametros(0) & ")"
+                        End Try
+                        Console.Error.WriteLine("Cliente: INFO - error desconocido: " + causa)
                     End If
                 End Sub, True)
         End Sub
@@ -113,6 +142,9 @@ Namespace Logica
         Public Sub EnviarALLMSG()
             Escuchador.EnviarMensaje(IPServidor, New MensajeData(MensajeData.Tipos.ALLMSG, {UsuarioLocal.ServerId}),
                     Sub(ByVal mensaje As Logica.MensajeData, idMensajeResponse As Long, IPResponse As IPEndPoint)
+                        If Not VerificarSeguridad("EnviarALLMSG", IPResponse) Then
+                            Return
+                        End If
                         If mensaje.Tipo = MensajeData.Tipos.ESTADO_OK Then
                             FrmChatActivo.LimpiarMensajes()
                             Mensajes.Clear()
@@ -120,18 +152,39 @@ Namespace Logica
                         ElseIf mensaje.Tipo = MensajeData.Tipos.ESTADO_ERROR AndAlso
                                mensaje.Parametros(0) = MensajeData.TiposError.LOSTCONECTION Then
                             OnLostConection()
+                        Else
+                            OnLostConection()
+                            Dim causa = ""
+                            Try
+                                causa = CType(mensaje.Parametros(0), MensajeData.TiposError).ToString
+                            Catch ex As Exception
+                                causa = "No se pudo castear el tipo de error (" & mensaje.Parametros(0) & ")"
+                            End Try
+                            Console.Error.WriteLine("Cliente: INFO - error desconocido: " + causa)
                         End If
                     End Sub, True)
         End Sub
         Public Sub EnviarALLUSR()
             Escuchador.EnviarMensaje(IPServidor, New MensajeData(MensajeData.Tipos.ALLUSR, {UsuarioLocal.ServerId}),
                     Sub(ByVal mensaje As Logica.MensajeData, idMensajeResponse As Long, IPResponse As IPEndPoint)
+                        If Not VerificarSeguridad("EnviarALLUSR", IPResponse) Then
+                            Return
+                        End If
                         If mensaje.Tipo = MensajeData.Tipos.ESTADO_OK Then
                             Usuarios = mensaje.Parametros(0)
                             FrmChatActivo.AgregarUsuarios(Usuarios)
                         ElseIf mensaje.Tipo = MensajeData.Tipos.ESTADO_ERROR AndAlso
                                mensaje.Parametros(0) = MensajeData.TiposError.LOSTCONECTION Then
                             OnLostConection()
+                        Else
+                            OnLostConection()
+                            Dim causa = ""
+                            Try
+                                causa = CType(mensaje.Parametros(0), MensajeData.TiposError).ToString
+                            Catch ex As Exception
+                                causa = "No se pudo castear el tipo de error (" & mensaje.Parametros(0) & ")"
+                            End Try
+                            Console.Error.WriteLine("Cliente: INFO - error desconocido: " + causa)
                         End If
                     End Sub, True)
         End Sub
@@ -146,14 +199,27 @@ Namespace Logica
             msgContenido.Contenido = texto
             msg.Parametros = New Object() {msgContenido}
 
-            Dim method As Action(Of Logica.MensajeData, Long, IPEndPoint) = Sub(ByVal mensaje As Logica.MensajeData, idMensajeResponse As Long, IPResponse As IPEndPoint)
-                                                                                If mensaje.Tipo = MensajeData.Tipos.ESTADO_OK Then
-                                                                                    Console.WriteLine("(Cliente) El mensaje se envió correctamente")
-                                                                                ElseIf mensaje.Tipo = MensajeData.Tipos.ESTADO_ERROR AndAlso
-                                                                                       mensaje.Parametros(0) = MensajeData.TiposError.LOSTCONECTION Then
-                                                                                    OnLostConection()
-                                                                                End If
-                                                                            End Sub
+            Dim method As Action(Of Logica.MensajeData, Long, IPEndPoint) =
+                Sub(ByVal mensaje As Logica.MensajeData, idMensajeResponse As Long, IPResponse As IPEndPoint)
+                    If Not VerificarSeguridad("EnviarMSG", IPResponse) Then
+                        Return
+                    End If
+                    If mensaje.Tipo = MensajeData.Tipos.ESTADO_OK Then
+                        Console.WriteLine("(Cliente) El mensaje se envió correctamente")
+                    ElseIf mensaje.Tipo = MensajeData.Tipos.ESTADO_ERROR AndAlso
+                           mensaje.Parametros(0) = MensajeData.TiposError.LOSTCONECTION Then
+                        OnLostConection()
+                    Else
+                        OnLostConection()
+                        Dim causa = ""
+                        Try
+                            causa = CType(mensaje.Parametros(0), MensajeData.TiposError).ToString
+                        Catch ex As Exception
+                            causa = "No se pudo castear el tipo de error (" & mensaje.Parametros(0) & ")"
+                        End Try
+                        Console.Error.WriteLine("Cliente: INFO - error desconocido: " + causa)
+                    End If
+                End Sub
             Console.WriteLine(IPServidor.ToString)
             Escuchador.EnviarMensaje(IPServidor, msg, method, True)
         End Sub
@@ -161,6 +227,9 @@ Namespace Logica
         Public Sub EnviarCHGNAME(nombre As String, color As Color)
             Dim method As Action(Of Logica.MensajeData, Long, IPEndPoint) =
                 Sub(ByVal mensaje As Logica.MensajeData, idMensajeResponse As Long, IPResponse As IPEndPoint)
+                    If Not VerificarSeguridad("EnviarCHGNAME", IPResponse) Then
+                        Return
+                    End If
                     If mensaje.Tipo = MensajeData.Tipos.ESTADO_OK Then
                         UsuarioLocal.Nombre = nombre
                         UsuarioLocal.Color = color
@@ -168,6 +237,15 @@ Namespace Logica
                     ElseIf mensaje.Tipo = MensajeData.Tipos.ESTADO_ERROR AndAlso
                            mensaje.Parametros(0) = MensajeData.TiposError.LOSTCONECTION Then
                         OnLostConection()
+                    Else
+                        OnLostConection()
+                        Dim causa = ""
+                        Try
+                            causa = CType(mensaje.Parametros(0), MensajeData.TiposError).ToString
+                        Catch ex As Exception
+                            causa = "No se pudo castear el tipo de error (" & mensaje.Parametros(0) & ")"
+                        End Try
+                        Console.Error.WriteLine("Cliente: INFO - error desconocido: " + causa)
                     End If
                 End Sub
 
@@ -316,6 +394,7 @@ Namespace Logica
         End Sub
 
         Private Function VerificarSeguridad(ByRef debugTag As String, ByRef ip As IPEndPoint) As Boolean
+            If IsNothing(ip) Then Return True
             If Not IPServidor.Address.Equals(ip.Address) OrElse Not IPServidor.Port = ip.Port Then
                 Console.Error.WriteLine("Cliente: {0} del servidor desde un EndPoint diferente", debugTag)
                 Return False
