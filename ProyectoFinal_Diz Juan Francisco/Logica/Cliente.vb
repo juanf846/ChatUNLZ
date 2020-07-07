@@ -331,6 +331,7 @@ Namespace Logica
         Public Sub Terminate()
             If Not Terminando Then
                 Terminando = True
+                If Not IsNothing(BEANSenderActivo) Then BEANSenderActivo.Terminate()
                 FrmChatActivo.Close()
                 If Conectado Then
                     Dim newMensajeDataDISCONNECT As New MensajeData(MensajeData.Tipos.DISCONNECT, {UsuarioLocal.ServerId})

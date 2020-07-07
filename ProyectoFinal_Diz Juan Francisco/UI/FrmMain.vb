@@ -8,6 +8,12 @@
 
         Control.CheckForIllegalCrossThreadCalls = False
     End Sub
+    Private Sub FrmMain_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
+        Configuracion.Inicializar()
+        TxtNombre.Text = Configuracion.Nombre
+        BtnColor.BackColor = Configuracion.Color
+    End Sub
 
     Private Sub BtnCrear_Click(sender As Object, e As EventArgs) Handles BtnCrear.Click
         Dim nombre As String = ""
@@ -25,6 +31,9 @@
         Dim usuario As New Logica.Usuario
         usuario.Nombre = nombre
         usuario.Color = BtnColor.BackColor
+
+        Configuracion.Nombre = usuario.Nombre
+        Configuracion.Color = usuario.Color
 
         Me.Hide()
         FrmChat.Open(False, New Net.IPEndPoint(Net.IPAddress.Any, puerto), usuario, contraseña, Me)
@@ -46,6 +55,11 @@
         Dim usuario As New Logica.Usuario
         usuario.Nombre = nombre
         usuario.Color = BtnColor.BackColor
+
+        Configuracion.Nombre = usuario.Nombre
+        Configuracion.Color = usuario.Color
+        Configuracion.IPConexion = IPServer.Address.ToString()
+        Configuracion.PuertoConexion = IPServer.Port
 
         Console.WriteLine("Conectando a " & IPServer.ToString)
         Me.Hide()

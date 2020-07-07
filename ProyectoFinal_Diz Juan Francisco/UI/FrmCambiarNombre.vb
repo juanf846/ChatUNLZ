@@ -23,7 +23,6 @@
             Return
         End If
         NewColor = BtnColor.BackColor
-
         Cancelado = False
         Me.Close()
     End Sub

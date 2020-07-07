@@ -6,6 +6,8 @@ Public Class FrmConectarServer
 
     Public Shared Function Mostrar(ByRef endPoint As IPEndPoint) As Boolean
         Dim frm As New FrmConectarServer
+        frm.TxtPuerto.Text = Configuracion.PuertoConexion
+        frm.TxtIp.Text = Configuracion.IPConexion
         frm.ShowDialog()
         If Not frm.Cancelado Then
             endPoint = frm.EndPoint

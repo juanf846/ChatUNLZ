@@ -73,6 +73,7 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuracion\Configuracion.vb" />
     <Compile Include="Logica\Cliente.vb" />
     <Compile Include="Logica\Mensaje.vb" />
     <Compile Include="UDP\CifradorAES.vb" />
